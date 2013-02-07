@@ -7,6 +7,7 @@
 //******************************************************************************
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.LinkedList;
 
 import edu.rit.numeric.ExponentialPrng;
@@ -36,6 +37,7 @@ public class Simulate {
 	public static Simulation sim;
 	private static LinkedList<CacheBlockRequest> requestQueue;
 	public static Random blockPrng,clientPrng;
+	private static ExponentialPrng requestPrng;
 	private static long requestCount;
 	//private static 
 	
@@ -48,15 +50,18 @@ public class Simulate {
 		
 		String fileName = args[0];
 		File file = new File(fileName);
-		
-		if(!file.exists()) {
+
+		ConfigReader config = null;
+		try {
+			config = new ConfigReader(file);
+		} catch (FileNotFoundException e) {
 			System.err.println ("File: " + fileName +"does not exist");
 			return;
 		}
 		
-		ConfigReader config = new ConfigReader(file);
 		blockPrng = Random.getInstance(config.getSeed());
 		clientPrng = Random.getInstance(config.getSeed());
+		requestPrng = new ExponentialPrng(Random.getInstance(config.getSeed()), config.getRequestLambda());
 		
 		FileSystem fs = new FileSystem(config);
 		fs.SetUpServer();

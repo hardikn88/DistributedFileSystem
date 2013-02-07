@@ -1,4 +1,6 @@
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 import edu.rit.numeric.ExponentialPrng;
 import edu.rit.util.Random;
@@ -25,9 +27,9 @@ public class ConfigReader {
 	
 	private int N_L, N_U, N_D;
 	
-	private static long seed;
+	private long seed;
 	
-	private static ExponentialPrng taskPrng;
+	private double requestLambda;
 	
 	private long clientCacheSize, serverCacheSize;
 	
@@ -41,8 +43,8 @@ public class ConfigReader {
 	
 	private double diskAccessTime, localClientCacheAccessTime, remoteCacheAccessTime;
 	
-	public ConfigReader(File file) {
-		
+	public ConfigReader(File file) throws FileNotFoundException {
+		readFile(file);
 	}
 
 	/**
@@ -97,22 +99,22 @@ public class ConfigReader {
 	/**
 	 * @param seed the seed to set
 	 */
-	public static void setSeed(long _seed) {
-		seed = _seed;
+	public void setSeed(long seed) {
+		this.seed = seed;
 	}
 
 	/**
-	 * @return the taskPrng
+	 * @return the requestLambda
 	 */
-	public static ExponentialPrng getTaskPrng() {
-		return taskPrng;
+	public double getRequestLambda() {
+		return requestLambda;
 	}
 
 	/**
-	 * @param taskPrng the taskPrng to set
+	 * @param requestLambda the requestLambda to set
 	 */
-	public static void setTaskPrng(ExponentialPrng _taskPrng) {
-		taskPrng = _taskPrng;
+	public void setRequestLambda(double requestLambda) {
+		this.requestLambda = requestLambda;
 	}
 
 	/**
@@ -153,8 +155,8 @@ public class ConfigReader {
 	/**
 	 * @param numberOfBlocks the numberOfBlocks to set
 	 */
-	public static void setNumberOfBlocks(int _numberOfBlocks) {
-		numberOfBlocks = _numberOfBlocks;
+	public static void setNumberOfBlocks(int numberOfBlocks) {
+		ConfigReader.numberOfBlocks = numberOfBlocks;
 	}
 
 	/**
@@ -167,8 +169,8 @@ public class ConfigReader {
 	/**
 	 * @param numberOfRequests the numberOfRequests to set
 	 */
-	public static void setNumberOfRequests(long _numberOfRequests) {
-		numberOfRequests = _numberOfRequests;
+	public static void setNumberOfRequests(long numberOfRequests) {
+		ConfigReader.numberOfRequests = numberOfRequests;
 	}
 
 	/**
@@ -241,5 +243,49 @@ public class ConfigReader {
 		this.remoteCacheAccessTime = remoteCacheAccessTime;
 	}
 	
-	
+	public void readFile(File file) throws FileNotFoundException {
+		Scanner scanner = new Scanner(file);
+		if (scanner.hasNextLine())
+			setN_L(Integer.parseInt(scanner.nextLine()));
+		else {
+				System.err.println("File is empty");
+				System.exit (1);
+		}
+		
+		if (scanner.hasNextLine())
+			setN_U(Integer.parseInt(scanner.nextLine()));
+		
+		if (scanner.hasNextLine())
+			setN_D(Integer.parseInt(scanner.nextLine()));
+		
+		if (scanner.hasNextLine())
+			setClientCacheSize(Long.parseLong(scanner.nextLine()));
+		
+		if (scanner.hasNextLine())
+			setServerCacheSize(Long.parseLong(scanner.nextLine()));
+		
+		if (scanner.hasNextLine())
+			setNumberOfBlocks(Integer.parseInt(scanner.nextLine()));
+		
+		if (scanner.hasNextLine())
+			setNumberOfRequests(Long.parseLong(scanner.nextLine()));
+		
+		if (scanner.hasNextLine())
+			setDiskAccessTime(Double.parseDouble(scanner.nextLine()));
+		
+		if (scanner.hasNextLine())
+			setLocalClientCacheAccessTime(Double.parseDouble(scanner.nextLine()));
+		
+		if (scanner.hasNextLine())
+			setRemoteCacheAccessTime(Double.parseDouble(scanner.nextLine()));
+		
+		if (scanner.hasNextLine())
+			setAlgorithm((scanner.nextLine()));
+		
+		if (scanner.hasNextLine())
+			setSeed(Long.parseLong(scanner.nextLine()));
+		
+		if (scanner.hasNextLine())
+			setRequestLambda(Double.parseDouble(scanner.nextLine()));		
+	}
 }
