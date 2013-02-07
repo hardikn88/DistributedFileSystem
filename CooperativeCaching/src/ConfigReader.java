@@ -23,25 +23,23 @@ import edu.rit.util.Random;
 
 public class ConfigReader {
 	
-	private static int N_L, N_U, N_D;
-	
-	private static Random prng;
+	private int N_L, N_U, N_D;
 	
 	private static long seed;
 	
 	private static ExponentialPrng taskPrng;
 	
-	private static long clientCacheSize, serverCacheSize;
+	private long clientCacheSize, serverCacheSize;
 	
-	private static long numberOfBlocks;
+	private static int numberOfBlocks;
 	
 	private static long numberOfRequests;
 	
-	private static int blockSize;
+	private int blockSize;
 	
-	private static String algorithm;
+	private String algorithm;
 	
-	private static double diskAccessTime, localClientCacheAccessTime, remoteCacheAccessTime;
+	private double diskAccessTime, localClientCacheAccessTime, remoteCacheAccessTime;
 	
 	public ConfigReader(File file) {
 		
@@ -90,20 +88,6 @@ public class ConfigReader {
 	}
 
 	/**
-	 * @return the prng
-	 */
-	public Random getPrng() {
-		return prng;
-	}
-
-	/**
-	 * @param prng the prng to set
-	 */
-	public void setPrng(Random prng) {
-		this.prng = prng;
-	}
-
-	/**
 	 * @return the seed
 	 */
 	public long getSeed() {
@@ -113,22 +97,22 @@ public class ConfigReader {
 	/**
 	 * @param seed the seed to set
 	 */
-	public void setSeed(long seed) {
-		this.seed = seed;
+	public static void setSeed(long _seed) {
+		seed = _seed;
 	}
 
 	/**
 	 * @return the taskPrng
 	 */
-	public ExponentialPrng getTaskPrng() {
+	public static ExponentialPrng getTaskPrng() {
 		return taskPrng;
 	}
 
 	/**
 	 * @param taskPrng the taskPrng to set
 	 */
-	public void setTaskPrng(ExponentialPrng taskPrng) {
-		this.taskPrng = taskPrng;
+	public static void setTaskPrng(ExponentialPrng _taskPrng) {
+		taskPrng = _taskPrng;
 	}
 
 	/**
@@ -162,15 +146,15 @@ public class ConfigReader {
 	/**
 	 * @return the numberOfBlocks
 	 */
-	public long getNumberOfBlocks() {
+	public static int getNumberOfBlocks() {
 		return numberOfBlocks;
 	}
 
 	/**
 	 * @param numberOfBlocks the numberOfBlocks to set
 	 */
-	public void setNumberOfBlocks(long numberOfBlocks) {
-		this.numberOfBlocks = numberOfBlocks;
+	public static void setNumberOfBlocks(int _numberOfBlocks) {
+		numberOfBlocks = _numberOfBlocks;
 	}
 
 	/**
@@ -183,8 +167,8 @@ public class ConfigReader {
 	/**
 	 * @param numberOfRequests the numberOfRequests to set
 	 */
-	public void setNumberOfRequests(long numberOfRequests) {
-		this.numberOfRequests = numberOfRequests;
+	public static void setNumberOfRequests(long _numberOfRequests) {
+		numberOfRequests = _numberOfRequests;
 	}
 
 	/**

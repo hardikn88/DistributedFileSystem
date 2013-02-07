@@ -18,7 +18,7 @@
 
 public class FileSystem {
 	
-	private int numberOfClients;
+	private static int numberOfClients;
 	
 	private Client[] SetofClient;
 	
@@ -35,18 +35,19 @@ public class FileSystem {
 	/**
 	 * @return the numberOfClients
 	 */
-	public int getNumberOfClients() {
+	public static int getNumberOfClients() {
 		return numberOfClients;
 	}
 	
 	/**
 	 * @param numberOfClients the numberOfClients to set
 	 */
-	public void setNumberOfClients(int numberOfClients) {
-		this.numberOfClients = numberOfClients;
+	public static void setNumberOfClients(int _numberOfClients) {
+		numberOfClients = _numberOfClients;
 	}
 
-	public Boolean SetUpClient() {
+	public Boolean SetUpClient(int N) {
+		setNumberOfClients(N);
 		return null;
 	}
 	

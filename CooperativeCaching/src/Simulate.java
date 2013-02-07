@@ -35,7 +35,8 @@ public class Simulate {
 
 	public static Simulation sim;
 	private static LinkedList<CacheBlockRequest> requestQueue;
-	public static Random prng;
+	public static Random blockPrng,clientPrng;
+	private static long requestCount;
 	//private static 
 	
 	/**
@@ -54,19 +55,18 @@ public class Simulate {
 		}
 		
 		ConfigReader config = new ConfigReader(file);
+		blockPrng = Random.getInstance(config.getSeed());
+		clientPrng = Random.getInstance(config.getSeed());
 		
 		FileSystem fs = new FileSystem(config);
 		fs.SetUpServer();
 		fs.SetUpManager();
 		
-		long numberOfClients = config.getN_L();
-		prng = Random.getInstance(config.getSeed());
-		
-		for(long N = numberOfClients; N <= config.getN_U(); N+=config.getN_D()) {
-			fs.SetUpClient();
+		for(int N = config.getN_L(); N <= config.getN_U(); N+=config.getN_D()) {
+			fs.SetUpClient(N);
 			fs.ClearServerCache();
 			fs.ClearManagerEntries();
-						
+			
 			sim = new Simulation();
 			generateRequest();
 			
@@ -80,8 +80,11 @@ public class Simulate {
     }
     
     private static void generateRequest() {
-    	addToQueue (new CacheBlockRequest (prng.nextLong(ConfigReader.getNumberOfRequests())));
-    	
+    	requestCount++;
+    	System.out.println("Count of Request "+ requestCount);
+    	addToQueue (new CacheBlockRequest (blockPrng.nextInt(ConfigReader.getNumberOfBlocks())));
+    	if(requestCount<ConfigReader.getNumberOfRequests());
+    		
     	
     }
     
