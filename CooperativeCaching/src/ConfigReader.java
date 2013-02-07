@@ -23,25 +23,25 @@ import edu.rit.util.Random;
 
 public class ConfigReader {
 	
-	private int N_L, N_U, N_D;
+	private static int N_L, N_U, N_D;
 	
-	private Random prng;
+	private static Random prng;
 	
-	private long seed;
+	private static long seed;
 	
-	private ExponentialPrng taskPrng;
+	private static ExponentialPrng taskPrng;
 	
-	private long clientCacheSize, serverCacheSize;
+	private static long clientCacheSize, serverCacheSize;
 	
-	private long numberOfBlocks;
+	private static long numberOfBlocks;
 	
-	private long numberOfRequests;
+	private static long numberOfRequests;
 	
-	private int blockSize;
+	private static int blockSize;
 	
-	private String algorithm;
+	private static String algorithm;
 	
-	private double diskAccessTime, localClientCacheAccessTime, remoteCacheAccessTime;
+	private static double diskAccessTime, localClientCacheAccessTime, remoteCacheAccessTime;
 	
 	public ConfigReader(File file) {
 		
@@ -176,7 +176,7 @@ public class ConfigReader {
 	/**
 	 * @return the numberOfRequests
 	 */
-	public long getNumberOfRequests() {
+	public static long getNumberOfRequests() {
 		return numberOfRequests;
 	}
 

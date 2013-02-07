@@ -18,7 +18,7 @@ import edu.rit.sim.Simulation;
 import edu.rit.util.Random;
 
 /**
- * Class Simulate is used to generate tasks at a random arrival rate and random
+ * Class Simulate is used to generate tasks at a random arrival rate and random[[
  * task size
  *
  * @author Hardik Nagda
@@ -34,7 +34,9 @@ import edu.rit.util.Random;
 public class Simulate {
 
 	public static Simulation sim;
-	private static LinkedList<Integer> requestQueue;
+	private static LinkedList<CacheBlockRequest> requestQueue;
+	public static Random prng;
+	//private static 
 	
 	/**
 	 * @param args
@@ -58,12 +60,13 @@ public class Simulate {
 		fs.SetUpManager();
 		
 		long numberOfClients = config.getN_L();
+		prng = Random.getInstance(config.getSeed());
 		
 		for(long N = numberOfClients; N <= config.getN_U(); N+=config.getN_D()) {
 			fs.SetUpClient();
 			fs.ClearServerCache();
 			fs.ClearManagerEntries();
-			
+						
 			sim = new Simulation();
 			generateRequest();
 			
@@ -77,7 +80,17 @@ public class Simulate {
     }
     
     private static void generateRequest() {
+    	addToQueue (new CacheBlockRequest (prng.nextLong(ConfigReader.getNumberOfRequests())));
     	
     	
     }
+    
+    private static void addToQueue (CacheBlockRequest blockRequest) {
+	    System.out.printf ("%.3f %s added to queue%n", sim.time(), blockRequest);
+	    requestQueue.add (blockRequest);
+	    //if (requestQueue.size() == 1) 
+	    	//startServing();
+    } 
+    
+    
 }

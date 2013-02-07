@@ -18,10 +18,24 @@
 
 public class CacheBlock {
 	
-	private int blockID;
+	private long blockID;
 	
-	public CacheBlock (int blockID) {
+	/**
+	 * @return the blockID
+	 */
+	public long getBlockID() {
+		return blockID;
+	}
+
+	/**
+	 * @param blockID the blockID to set
+	 */
+	public void setBlockID(long blockID) {
 		this.blockID = blockID;
+	}
+
+	public CacheBlock (long l) {
+		this.blockID = l;
 	}
 	
 	public String toString() {
