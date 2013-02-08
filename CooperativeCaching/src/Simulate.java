@@ -60,20 +60,23 @@ public class Simulate {
 		blockPrng = Random.getInstance(config.getSeed());
 		clientPrng = Random.getInstance(config.getSeed());
 		requestPrng = new ExponentialPrng(Random.getInstance(config.getSeed()), config.getRequestLambda());
+		requestQueue = new LinkedList<CacheBlockRequest>();
 		
 		FileSystem fs = new FileSystem(config);
 		fs.SetUpServer();
 		fs.SetUpManager();
 		
-		for(int N = config.getN_L(); N <= config.getN_U(); N+=config.getN_D()) {
+		int N = 3;
+		//for(int N = config.getN_L(); N <= config.getN_U(); N+=config.getN_D()) {
 			fs.SetUpClient(N);
 			fs.ClearServerCache();
 			fs.ClearManagerEntries();
 			
 			sim = new Simulation();
 			generateRequest();
+			sim.run();
 			
-		}
+		//}
 		
 	}
 	

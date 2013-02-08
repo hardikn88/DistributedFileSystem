@@ -26,6 +26,7 @@ public abstract class Client {
 	
 	public Client(int clientID) {
 		this.clientID = clientID;
+		requestQueue = new LinkedList<CacheBlockRequest>();
 	}
 	
 	public void startServing() {

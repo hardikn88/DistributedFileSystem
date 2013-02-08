@@ -62,12 +62,12 @@ public class FileSystem {
 	}
 	
 	public void SetUpManager() {
-		setOfManager = new Manager[0];
+		setOfManager = new Manager[1];
 		setOfManager[0] = new Manager();
 	}
 	
 	public void SetUpServer() {
-		setOfServer = new Server[0];
+		setOfServer = new Server[1];
 		setOfServer[0] = new Server();
 	}
 	
