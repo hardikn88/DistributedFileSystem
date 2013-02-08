@@ -1,8 +1,8 @@
 //******************************************************************************
 //
-// File:    Server.java
+// File:    LACClient.java
 // Package: 
-// Unit:    Class Server
+// Unit:    Class LACClient
 //
 //******************************************************************************
 
@@ -16,14 +16,19 @@
  * 
  */
 
-public class Server {
-	
-	public Server() {
-		System.out.println("Server was created");
-	}
-	
-	public String toString() {
-		return "Server" ;
+public class LACClient extends Client  {
+
+	public LACClient(int clientID) {
+		super(clientID);
 	}
 
+	@Override
+	public void Eviction() {
+		
+	}
+
+	public String toString() {
+		return("LAC-Based "+ super.toString());
+	}
+	
 }

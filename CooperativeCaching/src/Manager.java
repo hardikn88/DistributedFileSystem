@@ -17,5 +17,13 @@
  */ 
 
 public class Manager {
-
+	
+	public Manager() {
+		System.out.println("Manager was created");
+	}
+	
+	public String toString() {
+		return "Manager" ;
+	}
+	
 }

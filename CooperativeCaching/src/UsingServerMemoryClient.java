@@ -1,8 +1,8 @@
 //******************************************************************************
 //
-// File:    Server.java
+// File:    UsingServerMemoryClient.java
 // Package: 
-// Unit:    Class Server
+// Unit:    Class UsingServerMemoryClient
 //
 //******************************************************************************
 
@@ -16,14 +16,19 @@
  * 
  */
 
-public class Server {
-	
-	public Server() {
-		System.out.println("Server was created");
+public class UsingServerMemoryClient extends Client {
+
+	public UsingServerMemoryClient(int clientID) {
+		super(clientID);
 	}
-	
+
+	@Override
+	public void Eviction() {
+		
+	}
+
 	public String toString() {
-		return "Server" ;
+		return("ServerMemory-Based "+ super.toString());
 	}
 
 }

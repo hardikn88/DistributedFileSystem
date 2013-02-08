@@ -1,8 +1,8 @@
 //******************************************************************************
 //
-// File:    Server.java
+// File:    HintBasedClient.java
 // Package: 
-// Unit:    Class Server
+// Unit:    Class HintBasedClient
 //
 //******************************************************************************
 
@@ -16,14 +16,18 @@
  * 
  */
 
-public class Server {
-	
-	public Server() {
-		System.out.println("Server was created");
+public class HintBasedClient extends Client {
+
+	public HintBasedClient(int clientID) {
+		super(clientID);
 	}
 	
-	public String toString() {
-		return "Server" ;
+	@Override
+	public void Eviction() {
+		
 	}
 
+	public String toString() {
+		return("Hint-Based "+ super.toString());
+	}	
 }

@@ -20,11 +20,11 @@ public class FileSystem {
 	
 	private static int numberOfClients;
 	
-	private Client[] SetofClient;
+	public static Client[] setOfClient;
 	
-	private Server[] SetofServer;
+	public Server[] setOfServer;
 	
-	private Manager[] SetofManager;
+	public Manager[] setOfManager;
 	
 	private ConfigReader config;
 		
@@ -42,29 +42,41 @@ public class FileSystem {
 	/**
 	 * @param numberOfClients the numberOfClients to set
 	 */
-	public static void setNumberOfClients(int _numberOfClients) {
-		numberOfClients = _numberOfClients;
+	public static void setNumberOfClients(int numberOfClients) {
+		FileSystem.numberOfClients = numberOfClients;
 	}
 
-	public Boolean SetUpClient(int N) {
+	public void SetUpClient(int N) {
 		setNumberOfClients(N);
-		return null;
+		System.out.println("Number of Clients: " + N);
+		
+		setOfClient = new Client[N];
+		
+		for(int i = 0 ; i < N ; i++)
+			if(config.getAlgorithm().equals("hint-based"))
+				setOfClient[i] = new HintBasedClient(i);
+			else if(config.getAlgorithm().equals("locality-based"))
+					setOfClient[i] = new LACClient(i);
+			else if(config.getAlgorithm().equals("servermemory-based"))
+					setOfClient[i] = new UsingServerMemoryClient(i);
 	}
 	
-	public Boolean SetUpManager() {
-		return null;
+	public void SetUpManager() {
+		setOfManager = new Manager[0];
+		setOfManager[0] = new Manager();
 	}
 	
-	public Boolean SetUpServer() {
-		return null;
+	public void SetUpServer() {
+		setOfServer = new Server[0];
+		setOfServer[0] = new Server();
 	}
 	
-	public Boolean ClearServerCache() {
-		return null;
+	public void ClearServerCache() {
+		
 	}
 	
-	public Boolean ClearManagerEntries() {
-		return null;
+	public void ClearManagerEntries() {
+		
 	}
 	
 }
