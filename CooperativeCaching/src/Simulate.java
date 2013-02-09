@@ -7,14 +7,13 @@
 //******************************************************************************
 
 import edu.rit.numeric.ExponentialPrng;
-import edu.rit.numeric.ListXYSeries;
-import edu.rit.numeric.plot.Plot;
+//import edu.rit.numeric.ListXYSeries;
+//import edu.rit.numeric.plot.Plot;
 import edu.rit.sim.Event;
 import edu.rit.sim.Simulation;
 import edu.rit.util.Random;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.LinkedList;
 
 /**
  * Class Simulate is used to generate tasks at a random arrival rate and random[[
@@ -33,8 +32,7 @@ import java.util.LinkedList;
 public class Simulate {
 
 	public static Simulation sim;
-	private static LinkedList<CacheBlockRequest> requestQueue;
-	public static Random blockPrng,clientPrng;
+	private static Random blockPrng,clientPrng;
 	private static ExponentialPrng requestPrng;
 	private static long requestCount;
 	//private static 
@@ -60,13 +58,12 @@ public class Simulate {
 		blockPrng = Random.getInstance(config.getSeed());
 		clientPrng = Random.getInstance(config.getSeed());
 		requestPrng = new ExponentialPrng(Random.getInstance(config.getSeed()), config.getRequestLambda());
-		requestQueue = new LinkedList<CacheBlockRequest>();
 		
 		FileSystem fs = new FileSystem(config);
 		fs.SetUpServer();
 		fs.SetUpManager();
 		
-		int N = 3;
+		int N = 2;
 		//for(int N = config.getN_L(); N <= config.getN_U(); N+=config.getN_D()) {
 			fs.SetUpClient(N);
 			fs.ClearServerCache();
@@ -86,9 +83,16 @@ public class Simulate {
     }
     
     private static void generateRequest() {
+    	
     	requestCount++;
     	System.out.println ("Request Count: "+ requestCount);
-    	addToQueue (new CacheBlockRequest (blockPrng.nextInt (ConfigReader.getNumberOfBlocks())));
+    	
+    	Client client = forwardingClient();    	
+    	CacheBlockRequest blockRequest = new CacheBlockRequest (blockPrng.nextInt (ConfigReader.getNumberOfBlocks()));
+    	
+    	System.out.printf ("%.3f %s request passed to client %s %n", sim.time(), blockRequest, client);
+    	client.addToQueue (blockRequest);
+    	
     	if(requestCount<ConfigReader.getNumberOfRequests())
     		sim.doAfter (requestPrng.next(), new Event()
     		{
@@ -97,23 +101,9 @@ public class Simulate {
     	
     }
     
-    private static void addToQueue (CacheBlockRequest blockRequest) {
-	    System.out.printf ("%.3f %s added to queue%n", sim.time(), blockRequest);
-	    requestQueue.add (blockRequest);
-	    invokeScheduler();
-    } 
-    
-    private static void invokeScheduler() {
-    	
-    	CacheBlockRequest request = requestQueue.removeFirst();
-    	System.out.printf ("%.3f %s removed from queue%n", sim.time(), request);
-    	
+    private static Client forwardingClient() {
     	int clientID = clientPrng.nextInt(FileSystem.getNumberOfClients());
-    	
-    	FileSystem.setOfClient[clientID].requestQueue.add(request);
-    	System.out.printf ("%.3f %s added to queue of client %s %n", sim.time(), request,FileSystem.setOfClient[clientID].toString());
-    	
-    	if(FileSystem.setOfClient[clientID].requestQueue.size() == 1)
-    		FileSystem.setOfClient[clientID].startServing();
+    	return FileSystem.setOfClient[clientID];
     }
+    
 }

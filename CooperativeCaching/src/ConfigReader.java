@@ -1,10 +1,3 @@
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Scanner;
-
-import edu.rit.numeric.ExponentialPrng;
-import edu.rit.util.Random;
-
 //******************************************************************************
 //
 // File:    ConfigReader.java
@@ -12,6 +5,10 @@ import edu.rit.util.Random;
 // Unit:    Class ConfigReader
 //
 //******************************************************************************
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 /**
  * Class Status provides the functionality to set the status for the Resources
