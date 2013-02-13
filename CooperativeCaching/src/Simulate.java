@@ -73,6 +73,13 @@ public class Simulate {
 			generateRequest();
 			sim.run();
 			
+		for(int i=0 ; i < N ; i++)
+			System.out.println ("Block Access Time for Client " + FileSystem.setOfClient[i] + " is: "+ FileSystem.setOfClient[i].blockAccessTime + " Local Cache Hit is : "
+					+ FileSystem.setOfClient[i].localCacheHit + " Remote Cache Hit is : " + FileSystem.setOfClient[i].remoteCacheHit + " Disk hit is : " 
+					+ FileSystem.setOfClient[i].diskCacheHit); 
+			
+		
+			
 		//}
 		
 	}
@@ -85,7 +92,7 @@ public class Simulate {
     private static void generateRequest() {
     	
     	requestCount++;
-    	System.out.println ("Request Count: "+ requestCount);
+    	//System.out.println ("Request Count: "+ requestCount);
     	
     	Client client = forwardingClient();    	
     	CacheBlockRequest blockRequest = new CacheBlockRequest (blockPrng.nextInt (ConfigReader.getNumberOfBlocks()));

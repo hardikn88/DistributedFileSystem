@@ -69,7 +69,6 @@ public abstract class Client {
 
 	public void startServing() {
 		final CacheBlockRequest request = requestQueue.getFirst();
-		System.out.printf ("Client %s started serving %s at %.3f %n",this, request, Simulate.sim.time());
 		CacheBlock block = lookUp(request);
 		
 		if(block.IsMasterBlock())
@@ -79,6 +78,8 @@ public abstract class Client {
 		}	
 		
 		this.cache.put(block.getBlockID(), block);
+		System.out.printf ("Client %s contains hint %s%n",this, hints.toString());
+		System.out.printf ("Client %s contains cache %s%n",this, cache.toString());
 		
 		Simulate.sim.doAfter (Simulate.sim.time(), new Event()
 		{
@@ -89,16 +90,16 @@ public abstract class Client {
 	}
 	
 	private void removeFromQueue() {
-		CacheBlockRequest request = requestQueue.removeFirst();
-		System.out.printf ("%.3f %s removed from %s%n",
-		Simulate.sim.time(), request, this);
+		requestQueue.removeFirst();
+		//System.out.printf ("%.3f %s removed from %s%n",
+		//Simulate.sim.time(), request, this);
 		if(requestQueue.size()>0)
 			startServing();
 	}
 		
 	public CacheBlock lookUp(CacheBlockRequest request) {
 		int requestBlockID = request.getBlockID();
-		System.out.println("Lookup is performed for request" + requestBlockID);
+		System.out.println("Lookup is performed for request " + requestBlockID + " by Client " + this);
 		CacheBlock block = null;
 		block = performLocalLookup(this, requestBlockID);
 		
@@ -136,7 +137,7 @@ public abstract class Client {
 	
 	public CacheBlock remoteLookUp(Client client, int requestBlockID, int requestCount) {
 		
-		System.out.println("Remote Lookup is performed for request" + requestBlockID);
+		System.out.println("Remote Lookup is performed for request " + requestBlockID + " by Client " + client);
 		
 		client.blockAccessTime += ConfigReader.getLatencyTime();
 		

@@ -38,7 +38,7 @@ public class ConfigReader {
 	
 	private String algorithm;
 	
-	private static double diskAccessTime, clientCacheAccessTime, remoteCacheAccessTime, latencyTime;
+	private static double diskAccessTime, clientCacheAccessTime, latencyTime; /* remoteCacheAccessTime*/;
 	
 	public ConfigReader(File file) throws FileNotFoundException {
 		readFile(file);
@@ -257,16 +257,16 @@ public class ConfigReader {
 	/**
 	 * @return the remoteCacheAccessTime
 	 */
-	public double getRemoteCacheAccessTime() {
+/*	public double getRemoteCacheAccessTime() {
 		return remoteCacheAccessTime;
-	}
+	}*/
 
 	/**
 	 * @param remoteCacheAccessTime the remoteCacheAccessTime to set
 	 */
-	public void setRemoteCacheAccessTime(double remoteCacheAccessTime) {
+/*	public void setRemoteCacheAccessTime(double remoteCacheAccessTime) {
 		this.remoteCacheAccessTime = remoteCacheAccessTime;
-	}
+	}*/
 	
 	public static double getLatencyTime() {
 		return latencyTime;
@@ -310,7 +310,7 @@ public class ConfigReader {
 			setClientCacheAccessTime(Double.parseDouble(scanner.nextLine()));
 		
 		if (scanner.hasNextLine())
-			setRemoteCacheAccessTime(Double.parseDouble(scanner.nextLine()));
+			setLatencyTime(Double.parseDouble(scanner.nextLine()));
 		
 		if (scanner.hasNextLine())
 			setAlgorithm((scanner.nextLine()));
