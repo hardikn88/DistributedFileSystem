@@ -1,3 +1,5 @@
+import java.util.Hashtable;
+
 //******************************************************************************
 //
 // File:    Manager.java
@@ -18,12 +20,27 @@
 
 public class Manager {
 	
+	private Hashtable <Integer,Integer> hints;
+	
 	public Manager() {
 		System.out.println("Manager was created");
+		hints = new Hashtable<Integer, Integer> ();
+	}
+	
+	public Boolean containsHint(int requestBlockID) {
+		return hints.containsKey(requestBlockID);
 	}
 	
 	public String toString() {
 		return "Manager" ;
+	}
+
+	public int getHint(int requestBlockID) {
+		return hints.get(requestBlockID);
+	}
+
+	public void updateHintsOfManager(int blockID, int clientID) {
+		hints.put(blockID, clientID);
 	}
 	
 }

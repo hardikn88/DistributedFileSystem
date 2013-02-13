@@ -55,9 +55,9 @@ public class Simulate {
 			return;
 		}
 		
-		blockPrng = Random.getInstance(config.getSeed());
-		clientPrng = Random.getInstance(config.getSeed());
-		requestPrng = new ExponentialPrng(Random.getInstance(config.getSeed()), config.getRequestLambda());
+		blockPrng = Random.getInstance(config.getBlockSeed());
+		clientPrng = Random.getInstance(config.getClientSeed());
+		requestPrng = new ExponentialPrng(Random.getInstance(config.getRequestSeed()), config.getRequestLambda());
 		
 		FileSystem fs = new FileSystem(config);
 		fs.SetUpServer();

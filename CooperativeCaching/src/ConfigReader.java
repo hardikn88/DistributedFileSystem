@@ -24,7 +24,7 @@ public class ConfigReader {
 	
 	private int N_L, N_U, N_D;
 	
-	private long seed;
+	private long blockSeed, clientSeed, requestSeed;
 	
 	private double requestLambda;
 	
@@ -38,7 +38,7 @@ public class ConfigReader {
 	
 	private String algorithm;
 	
-	private double diskAccessTime, localClientCacheAccessTime, remoteCacheAccessTime;
+	private static double diskAccessTime, clientCacheAccessTime, remoteCacheAccessTime, latencyTime;
 	
 	public ConfigReader(File file) throws FileNotFoundException {
 		readFile(file);
@@ -87,17 +87,45 @@ public class ConfigReader {
 	}
 
 	/**
-	 * @return the seed
+	 * @return the blockSeed
 	 */
-	public long getSeed() {
-		return seed;
+	public long getBlockSeed() {
+		return blockSeed;
 	}
 
 	/**
-	 * @param seed the seed to set
+	 * @param blockSeed the blockSeed to set
 	 */
-	public void setSeed(long seed) {
-		this.seed = seed;
+	public void setBlockSeed(long blockSeed) {
+		this.blockSeed = blockSeed;
+	}
+
+	/**
+	 * @return the clientSeed
+	 */
+	public long getClientSeed() {
+		return clientSeed;
+	}
+
+	/**
+	 * @param clientSeed the clientSeed to set
+	 */
+	public void setClientSeed(long clientSeed) {
+		this.clientSeed = clientSeed;
+	}
+
+	/**
+	 * @return the requestSeed
+	 */
+	public long getRequestSeed() {
+		return requestSeed;
+	}
+
+	/**
+	 * @param requestSeed the requestSeed to set
+	 */
+	public void setRequestSeed(long requestSeed) {
+		this.requestSeed = requestSeed;
 	}
 
 	/**
@@ -201,29 +229,29 @@ public class ConfigReader {
 	/**
 	 * @return the diskAccessTime
 	 */
-	public double getDiskAccessTime() {
+	public static double getDiskAccessTime() {
 		return diskAccessTime;
 	}
 
 	/**
 	 * @param diskAccessTime the diskAccessTime to set
 	 */
-	public void setDiskAccessTime(double diskAccessTime) {
-		this.diskAccessTime = diskAccessTime;
+	public static void setDiskAccessTime(double diskAccessTime) {
+		ConfigReader.diskAccessTime = diskAccessTime;
 	}
 
 	/**
 	 * @return the localClientCacheAccessTime
 	 */
-	public double getLocalClientCacheAccessTime() {
-		return localClientCacheAccessTime;
+	public static double getClientCacheAccessTime() {
+		return clientCacheAccessTime;
 	}
 
 	/**
 	 * @param localClientCacheAccessTime the localClientCacheAccessTime to set
 	 */
-	public void setLocalClientCacheAccessTime(double localClientCacheAccessTime) {
-		this.localClientCacheAccessTime = localClientCacheAccessTime;
+	public static void setClientCacheAccessTime(double clientCacheAccessTime) {
+		ConfigReader.clientCacheAccessTime = clientCacheAccessTime;
 	}
 
 	/**
@@ -240,6 +268,14 @@ public class ConfigReader {
 		this.remoteCacheAccessTime = remoteCacheAccessTime;
 	}
 	
+	public static double getLatencyTime() {
+		return latencyTime;
+	}
+
+	public static void setLatencyTime(double latencyTime) {
+		ConfigReader.latencyTime = latencyTime;
+	}
+
 	public void readFile(File file) throws FileNotFoundException {
 		Scanner scanner = new Scanner(file);
 		if (scanner.hasNextLine())
@@ -271,7 +307,7 @@ public class ConfigReader {
 			setDiskAccessTime(Double.parseDouble(scanner.nextLine()));
 		
 		if (scanner.hasNextLine())
-			setLocalClientCacheAccessTime(Double.parseDouble(scanner.nextLine()));
+			setClientCacheAccessTime(Double.parseDouble(scanner.nextLine()));
 		
 		if (scanner.hasNextLine())
 			setRemoteCacheAccessTime(Double.parseDouble(scanner.nextLine()));
@@ -280,7 +316,13 @@ public class ConfigReader {
 			setAlgorithm((scanner.nextLine()));
 		
 		if (scanner.hasNextLine())
-			setSeed(Long.parseLong(scanner.nextLine()));
+			setBlockSeed(Long.parseLong(scanner.nextLine()));
+		
+		if (scanner.hasNextLine())
+			setClientSeed(Long.parseLong(scanner.nextLine()));
+		
+		if (scanner.hasNextLine())
+			setRequestSeed(Long.parseLong(scanner.nextLine()));
 		
 		if (scanner.hasNextLine())
 			setRequestLambda(Double.parseDouble(scanner.nextLine()));		

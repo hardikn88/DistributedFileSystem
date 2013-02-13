@@ -22,9 +22,9 @@ public class FileSystem {
 	
 	public static Client[] setOfClient;
 	
-	public Server[] setOfServer;
+	public static Server server;
 	
-	public Manager[] setOfManager;
+	public static Manager manager;
 	
 	private ConfigReader config;
 		
@@ -62,13 +62,11 @@ public class FileSystem {
 	}
 	
 	public void SetUpManager() {
-		setOfManager = new Manager[1];
-		setOfManager[0] = new Manager();
+		manager = new Manager();
 	}
 	
 	public void SetUpServer() {
-		setOfServer = new Server[1];
-		setOfServer[0] = new Server();
+		server = new Server(config.getServerCacheSize());
 	}
 	
 	public void ClearServerCache() {

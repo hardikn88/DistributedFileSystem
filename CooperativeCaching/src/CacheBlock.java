@@ -18,24 +18,54 @@
 
 public class CacheBlock {
 	
-	private long blockID;
+	private int blockID;
 	
+	private int masterClientHolder;
+	
+	private Boolean masterBlock;
 	/**
 	 * @return the blockID
 	 */
-	public long getBlockID() {
+	public int getBlockID() {
 		return blockID;
 	}
 
 	/**
 	 * @param blockID the blockID to set
 	 */
-	public void setBlockID(long blockID) {
+	public void setBlockID(int blockID) {
 		this.blockID = blockID;
 	}
 
-	public CacheBlock (long l) {
-		this.blockID = l;
+	/**
+	 * @return the masterClientHolder
+	 */
+	public int getMasterClientHolder() {
+		return masterClientHolder;
+	}
+
+	/**
+	 * @param masterClientHolder the masterClientHolder to set
+	 */
+	public void setMasterClientHolder(int masterClientHolder) {
+		this.masterClientHolder = masterClientHolder;
+	}
+
+	/**
+	 * @param masterBlock the masterBlock to set
+	 */
+	public void setMasterBlock(Boolean value) {
+		this.masterBlock = value;
+	}
+
+	public CacheBlock (int blockID) {
+		this.blockID = blockID;
+		setMasterClientHolder(-1);
+		setMasterBlock(true);
+	}
+	
+	public Boolean IsMasterBlock() {
+		return this.masterBlock;
 	}
 	
 	public String toString() {

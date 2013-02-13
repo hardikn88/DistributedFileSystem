@@ -1,3 +1,7 @@
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 //******************************************************************************
 //
 // File:    Server.java
@@ -18,12 +22,36 @@
 
 public class Server {
 	
-	public Server() {
-		System.out.println("Server was created");
+	private long cacheSize;
+	
+	public Disk disk;
+	
+	private Map<Integer, CacheBlock> cache;
+	
+	public Server(long cacheSize) {
+		this.cacheSize = cacheSize;
+		disk = new Disk ();
+		cache = Collections.synchronizedMap(new LinkedHashMap<Integer, CacheBlock>());
 	}
 	
 	public String toString() {
 		return "Server" ;
+	}
+
+	public CacheBlock performLookUpInServerCache(Client client, int requestBlockID) {
+		client.blockAccessTime += ConfigReader.getClientCacheAccessTime();
+		
+		CacheBlock block = null;
+		block = cache.get(requestBlockID);
+		
+		if(block!=null) 
+		{
+			synchronized (this) {
+				block.setMasterClientHolder(client.clientID);
+			}
+		}
+		
+		return block;
 	}
 
 }
