@@ -18,15 +18,31 @@
 
 public class LACClient extends Client  {
 
-	public LACClient(int clientID) {
-		super(clientID);
+	public LACClient(int clientID, final int cacheSize) {
+		super(clientID, cacheSize);
 	}
 
 	@Override
-	public void Eviction() {
+	public void Eviction(CacheBlock block) {
 		
 	}
 
+	@Override
+	public CacheBlock getForwardingBlock() {
+		return null;
+	}
+
+	@Override
+	public CacheBlock removeForwardingBlock() {
+		return null;
+	}
+
+	
+	@Override
+	public void forwardBlock(CacheBlock forwardedBlock) {
+		
+	}
+	
 	public String toString() {
 		return("LAC-Based "+ super.toString());
 	}

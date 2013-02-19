@@ -1,7 +1,3 @@
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 //******************************************************************************
 //
 // File:    Server.java
@@ -9,6 +5,10 @@ import java.util.Map;
 // Unit:    Class Server
 //
 //******************************************************************************
+
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Class Status provides the functionality to set the status for the Resources
@@ -22,16 +22,23 @@ import java.util.Map;
 
 public class Server {
 	
-	private long cacheSize;
-	
 	public Disk disk;
 	
 	private Map<Integer, CacheBlock> cache;
 	
-	public Server(long cacheSize) {
-		this.cacheSize = cacheSize;
+	public Server(final int cacheSize) {
 		disk = new Disk ();
-		cache = Collections.synchronizedMap(new LinkedHashMap<Integer, CacheBlock>());
+		cache = Collections.synchronizedMap(new LinkedHashMap<Integer, CacheBlock>(cacheSize + 1, 1.1f, true) {                                
+
+			private static final long serialVersionUID = 1L;
+
+			@Override
+            public boolean removeEldestEntry(Map.Entry<Integer, CacheBlock> eldest)  
+            {
+                //when to remove the eldest entry
+                return size() > cacheSize ;   //size exceeded the max allowed
+            }
+        });
 	}
 	
 	public String toString() {
@@ -39,19 +46,17 @@ public class Server {
 	}
 
 	public CacheBlock performLookUpInServerCache(Client client, int requestBlockID) {
-		client.blockAccessTime += ConfigReader.getClientCacheAccessTime();
-		
+		client.blockAccessTime += ConfigReader.getClientCacheAccessTime();	
+		CacheBlock tempBlock = cache.get(requestBlockID);
 		CacheBlock block = null;
-		block = cache.get(requestBlockID);
 		
-		if(block!=null) 
+		if(tempBlock!=null) 
 		{
+			block = new CacheBlock(tempBlock);
 			synchronized (this) {
 				block.setMasterClientHolder(client.clientID);
 			}
-		}
-		
+		}	
 		return block;
 	}
-
 }

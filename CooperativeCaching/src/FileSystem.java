@@ -51,14 +51,15 @@ public class FileSystem {
 		System.out.println("Number of Clients: " + N);
 		
 		setOfClient = new Client[N];
+		int cacheSize = (int) config.getClientCacheSize()/config.getBlockSize();
 		
 		for(int i = 0 ; i < N ; i++)
 			if(config.getAlgorithm().equals("hint-based"))
-				setOfClient[i] = new HintBasedClient(i);
+				setOfClient[i] = new HintBasedClient(i,cacheSize);
 			else if(config.getAlgorithm().equals("locality-based"))
-					setOfClient[i] = new LACClient(i);
+					setOfClient[i] = new LACClient(i, cacheSize);
 			else if(config.getAlgorithm().equals("servermemory-based"))
-					setOfClient[i] = new UsingServerMemoryClient(i);
+					setOfClient[i] = new UsingServerMemoryClient(i, cacheSize);
 	}
 	
 	public void SetUpManager() {
@@ -66,7 +67,8 @@ public class FileSystem {
 	}
 	
 	public void SetUpServer() {
-		server = new Server(config.getServerCacheSize());
+		int cacheSize = (int) config.getServerCacheSize()/config.getBlockSize();
+		server = new Server(cacheSize);
 	}
 	
 	public void ClearServerCache() {

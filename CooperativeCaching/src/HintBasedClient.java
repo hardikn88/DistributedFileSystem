@@ -1,3 +1,10 @@
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+
 //******************************************************************************
 //
 // File:    HintBasedClient.java
@@ -17,15 +24,126 @@
  */
 
 public class HintBasedClient extends Client {
-
-	public HintBasedClient(int clientID) {
-		super(clientID);
+	
+	public HintBasedClient(int clientID, final int cacheSize) {
+		super(clientID, cacheSize);
 	}
 	
 	@Override
-	public void Eviction() {
+	public void Eviction(CacheBlock block) {
+		CacheBlock forwardingBlock= null;
+		int victimClient = -1;
 		
+		if(!cacheContainsBlock(block)) 
+		{			
+			if(cacheFull()) 
+			{
+				forwardingBlock = this.removeForwardingBlock();
+				if(forwardingBlock.IsMasterBlock())
+				{
+					victimClient = findClientWithOldestBlock(forwardingBlock);
+					System.out.println("Victim Client is "+ FileSystem.setOfClient[victimClient]);
+					if(victimClient != this.clientID) 
+					{
+						FileSystem.setOfClient[victimClient].forwardBlock(forwardingBlock);
+						super.updateHints(forwardingBlock.getBlockID(), victimClient);
+						FileSystem.manager.updateHintsOfManager(forwardingBlock.getBlockID(), victimClient);
+					}
+					else
+					{
+						super.removeHints(forwardingBlock.getBlockID());
+						FileSystem.manager.removeHintsOfManager(forwardingBlock.getBlockID());
+					}
+				}
+			}			
+			block.setAccessTime(Simulate.sim.time());
+			this.cache.put(block.getBlockID(), block);	
+		}
 	}
+
+	private int findClientWithOldestBlock(CacheBlock forwardingBlock) {	
+		//double txTime = 0.0;
+		final List <CacheBlock> listofOldestBlocks = Collections.synchronizedList(new ArrayList<CacheBlock>());
+		
+		for(int i=0; i<FileSystem.getNumberOfClients(); i++) 
+		{
+			if(i==this.clientID)
+				continue;
+			
+//			txTime += 0.00001;
+//			final Client client = FileSystem.setOfClient[i];
+//			Simulate.sim.doAfter (txTime, new Event()
+//			{
+//				public void perform()
+//				{
+//					System.out.println("Hello inside perform");
+			CacheBlock forwardingBlockFromOtherClient = FileSystem.setOfClient[i].getForwardingBlock();
+			
+			if(forwardingBlockFromOtherClient!=null)
+			{
+				forwardingBlockFromOtherClient.setHoldingClient(i);
+				listofOldestBlocks.add(forwardingBlockFromOtherClient);
+			}					
+			System.out.println("listofoldestblock " + listofOldestBlocks.toString() +" was called at "+ Simulate.sim.time());
+//				}
+//			});			
+		}
+		
+		CacheBlock oldestBlock = forwardingBlock;
+		int victimClient = this.clientID;
+		
+		if(listofOldestBlocks != null)	
+			for (CacheBlock forwardingBlockFromOtherClient : listofOldestBlocks) {
+				if(forwardingBlockFromOtherClient.getAccessTime() < oldestBlock.getAccessTime())
+				{
+					oldestBlock = forwardingBlockFromOtherClient;
+					victimClient = forwardingBlockFromOtherClient.getHoldingClient();
+				}
+			}
+		return victimClient;
+	}
+	
+	public CacheBlock getForwardingBlock() {	
+		System.out.println("Client " + this.clientID +" was called at "+Simulate.sim.time());
+		Map.Entry<Integer, CacheBlock> entry = null;
+		
+		if(super.cache.size() != 0)
+			entry = super.cache.entrySet().iterator().next();
+		
+		CacheBlock forwardingBlock = null;
+		if(entry!=null)
+			forwardingBlock = new CacheBlock(entry.getValue());
+		
+		return forwardingBlock;
+	}
+	
+	public CacheBlock removeForwardingBlock() {	
+		System.out.println("Client " + this.clientID +" was called at "+Simulate.sim.time());
+		Map.Entry<Integer, CacheBlock> entry = super.cache.entrySet().iterator().next();
+		
+		CacheBlock forwardingBlock = null;
+		if(entry!=null)
+			forwardingBlock = super.cache.remove(entry.getKey());
+		
+		return forwardingBlock;
+	}
+	
+	public void forwardBlock(CacheBlock forwardedBlock) {
+		CacheBlock discardingBlock= null;
+		if(cacheFull())
+		{
+			discardingBlock = this.removeForwardingBlock();
+			if(discardingBlock.IsMasterBlock())
+			{
+				super.removeHints(discardingBlock.getBlockID());
+				FileSystem.manager.removeHintsOfManager(discardingBlock.getBlockID());
+			}
+		}
+		forwardedBlock.setAccessTime(Simulate.sim.time());
+		this.cache.put(forwardedBlock.getBlockID(), forwardedBlock);
+		super.updateHints(forwardedBlock.getBlockID(), this.clientID);
+	}
+	
 
 	public String toString() {
 		return("Hint-Based "+ super.toString());

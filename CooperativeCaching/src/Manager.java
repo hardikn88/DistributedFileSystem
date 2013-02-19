@@ -20,7 +20,7 @@ import java.util.Hashtable;
 
 public class Manager {
 	
-	private Hashtable <Integer,Integer> hints;
+	public Hashtable <Integer,Integer> hints;
 	
 	public Manager() {
 		System.out.println("Manager was created");
@@ -40,7 +40,11 @@ public class Manager {
 	}
 
 	public void updateHintsOfManager(int blockID, int clientID) {
-		hints.put(blockID, clientID);
+		this.hints.put(blockID, clientID);
+	}
+
+	public void removeHintsOfManager(int blockID) {
+		this.hints.remove(blockID);
 	}
 	
 }

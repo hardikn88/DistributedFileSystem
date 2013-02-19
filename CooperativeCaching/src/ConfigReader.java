@@ -298,6 +298,9 @@ public class ConfigReader {
 			setServerCacheSize(Long.parseLong(scanner.nextLine()));
 		
 		if (scanner.hasNextLine())
+			setBlockSize(Integer.parseInt(scanner.nextLine()));
+		
+		if (scanner.hasNextLine())
 			setNumberOfBlocks(Integer.parseInt(scanner.nextLine()));
 		
 		if (scanner.hasNextLine())

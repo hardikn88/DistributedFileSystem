@@ -1,12 +1,23 @@
+//******************************************************************************
+//
+// File:    Disk.java
+// Package: 
+// Unit:    Class Disk
+//
+//******************************************************************************
+
 /**
+ * Class Disk provides the functionality to set the status for the Resources
+ * as well as to retrieve the current resource's status
+ * 
+ * @author Hardik Nagda
+ * 
+ * @version Jan 30, 2013
  * 
  */
 
-/**
- * @author Hardik
- *
- */
 public class Disk {
+	
 	public Disk() {
 		
 	}

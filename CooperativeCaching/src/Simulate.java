@@ -63,7 +63,7 @@ public class Simulate {
 		fs.SetUpServer();
 		fs.SetUpManager();
 		
-		int N = 2;
+		int N = 100;
 		//for(int N = config.getN_L(); N <= config.getN_U(); N+=config.getN_D()) {
 			fs.SetUpClient(N);
 			fs.ClearServerCache();
@@ -73,10 +73,20 @@ public class Simulate {
 			generateRequest();
 			sim.run();
 			
+		double accessTime= 0.0;
+		long localHit = 0 , remoteHit = 0 , diskHit = 0;
 		for(int i=0 ; i < N ; i++)
-			System.out.println ("Block Access Time for Client " + FileSystem.setOfClient[i] + " is: "+ FileSystem.setOfClient[i].blockAccessTime + " Local Cache Hit is : "
-					+ FileSystem.setOfClient[i].localCacheHit + " Remote Cache Hit is : " + FileSystem.setOfClient[i].remoteCacheHit + " Disk hit is : " 
-					+ FileSystem.setOfClient[i].diskCacheHit); 
+		{
+			accessTime+= FileSystem.setOfClient[i].blockAccessTime;
+			localHit+= FileSystem.setOfClient[i].localCacheHit;
+			remoteHit+=FileSystem.setOfClient[i].remoteCacheHit;
+			diskHit+=FileSystem.setOfClient[i].diskCacheHit;
+		}
+		
+		System.out.println("Manager Hint" + FileSystem.manager.hints.toString());
+		System.out.println ("Block Access Time for all Client is: "+ accessTime + " Local Cache Hit is : "
+				+ localHit + " Remote Cache Hit is : " + remoteHit + " Disk hit is : " 
+				+ diskHit); 
 			
 		
 			
@@ -97,7 +107,7 @@ public class Simulate {
     	Client client = forwardingClient();    	
     	CacheBlockRequest blockRequest = new CacheBlockRequest (blockPrng.nextInt (ConfigReader.getNumberOfBlocks()));
     	
-    	System.out.printf ("%.3f %s request passed to client %s %n", sim.time(), blockRequest, client);
+    	//System.out.printf ("%.3f %s request passed to client %s %n", sim.time(), blockRequest, client);
     	client.addToQueue (blockRequest);
     	
     	if(requestCount<ConfigReader.getNumberOfRequests())
