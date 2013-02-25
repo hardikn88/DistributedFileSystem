@@ -53,11 +53,13 @@ public class FileSystem {
 		setOfClient = new Client[N];
 		int cacheSize = (int) config.getClientCacheSize()/config.getBlockSize();
 		
+		int forwardingPoolSize = (int) config.getForwardingPoolSize()/config.getBlockSize();
+		
 		for(int i = 0 ; i < N ; i++)
 			if(config.getAlgorithm().equals("hint-based"))
 				setOfClient[i] = new HintBasedClient(i,cacheSize);
 			else if(config.getAlgorithm().equals("locality-based"))
-					setOfClient[i] = new LACClient(i, cacheSize);
+					setOfClient[i] = new LACClient(i, cacheSize, forwardingPoolSize);
 			else if(config.getAlgorithm().equals("servermemory-based"))
 					setOfClient[i] = new UsingServerMemoryClient(i, cacheSize);
 	}

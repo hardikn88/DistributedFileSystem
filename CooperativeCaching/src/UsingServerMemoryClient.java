@@ -16,10 +16,10 @@
  * 
  */
 
-public class UsingServerMemoryClient extends Client {
+public class UsingServerMemoryClient extends LACClient{
 
 	public UsingServerMemoryClient(int clientID, final int cacheSize) {
-		super(clientID, cacheSize);
+		super(clientID, cacheSize, cacheSize);
 	}
 
 	@Override

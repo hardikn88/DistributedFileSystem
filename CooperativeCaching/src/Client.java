@@ -40,7 +40,7 @@ public abstract class Client {
 	
 	private int clientCapacity;
 	
-	public Client(int clientID, final int cacheSize) {
+	public Client(int clientID, final int cacheSize, final int clientCapacity) {
 		
 		this.clientID = clientID;
 		
@@ -52,13 +52,13 @@ public abstract class Client {
 		
 		this.blockAccessTime = 0.0;
 		
-		requestQueue = new LinkedList<CacheBlockRequest>();
+		this.requestQueue = new LinkedList<CacheBlockRequest>();
 		
-		hints = new Hashtable<Integer, Integer>();
+		this.hints = new Hashtable<Integer, Integer>();
 		
-		clientCapacity = cacheSize;
+		this.clientCapacity = clientCapacity;
 		
-		cache = Collections.synchronizedMap(new LinkedHashMap<Integer, CacheBlock>(cacheSize, 1.1f, true));	
+		this.cache = Collections.synchronizedMap(new LinkedHashMap<Integer, CacheBlock>(cacheSize, 1.1f, true));	
 	}
 
     public void addToQueue (CacheBlockRequest blockRequest) {
@@ -73,7 +73,7 @@ public abstract class Client {
 		final CacheBlockRequest request = requestQueue.getFirst();
 		CacheBlock block = lookUp(request);
 		
-		System.out.println("Block "+block.getBlockID()+" obtained is "+block.IsMasterBlock());
+		//System.out.println("Block "+block.getBlockID()+" obtained is "+block.IsMasterBlock());
 		
 		if(block.IsMasterBlock())
 			FileSystem.manager.updateHintsOfManager(block.getBlockID(), this.clientID);
@@ -136,7 +136,7 @@ public abstract class Client {
 	
 	public CacheBlock remoteLookUp(Client client, int requestBlockID, int requestCount) {
 		
-		System.out.println("Remote Lookup is performed for request " + requestBlockID + " by Client " + client);
+		//System.out.println("Remote Lookup is performed for request " + requestBlockID + " by Client " + client);
 		
 		client.blockAccessTime += ConfigReader.getLatencyTime();
 		
@@ -211,8 +211,8 @@ public abstract class Client {
 	}
 	
 	public Boolean cacheFull() {
-		System.out.println("cache size " + cache.size());
-		return this.cache.size() >= clientCapacity; 
+		//System.out.println("cache size " + cache.size());
+		return this.cache.size() >= this.clientCapacity; 
 	}
 	
 	protected void updateHints(int masterBlockID, int masterBlockHoldingClient) {
@@ -221,6 +221,7 @@ public abstract class Client {
 	
 	protected void removeHints(int masterBlockID) {
 		this.hints.remove(masterBlockID);
+		FileSystem.manager.removeHintsOfManager(masterBlockID);
 	}
 	
 	abstract public void Eviction(CacheBlock block);

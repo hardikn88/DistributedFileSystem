@@ -28,7 +28,7 @@ public class ConfigReader {
 	
 	private double requestLambda;
 	
-	private long clientCacheSize, serverCacheSize;
+	private long clientCacheSize, serverCacheSize, forwardingPoolSize;
 	
 	private static int numberOfBlocks;
 	
@@ -171,6 +171,20 @@ public class ConfigReader {
 	}
 
 	/**
+	 * @return the forwardingPoolSize
+	 */
+	public long getForwardingPoolSize() {
+		return forwardingPoolSize;
+	}
+
+	/**
+	 * @param forwardingPoolSize the forwardingPoolSize to set
+	 */
+	public void setForwardingPoolSize(long forwardingPoolSize) {
+		this.forwardingPoolSize = forwardingPoolSize;
+	}
+
+	/**
 	 * @return the numberOfBlocks
 	 */
 	public static int getNumberOfBlocks() {
@@ -296,6 +310,9 @@ public class ConfigReader {
 		
 		if (scanner.hasNextLine())
 			setServerCacheSize(Long.parseLong(scanner.nextLine()));
+		
+		if (scanner.hasNextLine())
+			setForwardingPoolSize(Long.parseLong(scanner.nextLine()));
 		
 		if (scanner.hasNextLine())
 			setBlockSize(Integer.parseInt(scanner.nextLine()));

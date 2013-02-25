@@ -1,4 +1,3 @@
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -26,7 +25,7 @@ import java.util.Map;
 public class HintBasedClient extends Client {
 	
 	public HintBasedClient(int clientID, final int cacheSize) {
-		super(clientID, cacheSize);
+		super(clientID, cacheSize, cacheSize);
 	}
 	
 	@Override
@@ -50,10 +49,7 @@ public class HintBasedClient extends Client {
 						FileSystem.manager.updateHintsOfManager(forwardingBlock.getBlockID(), victimClient);
 					}
 					else
-					{
 						super.removeHints(forwardingBlock.getBlockID());
-						FileSystem.manager.removeHintsOfManager(forwardingBlock.getBlockID());
-					}
 				}
 			}			
 			block.setAccessTime(Simulate.sim.time());
@@ -84,7 +80,7 @@ public class HintBasedClient extends Client {
 				forwardingBlockFromOtherClient.setHoldingClient(i);
 				listofOldestBlocks.add(forwardingBlockFromOtherClient);
 			}					
-			System.out.println("listofoldestblock " + listofOldestBlocks.toString() +" was called at "+ Simulate.sim.time());
+			//System.out.println("listofoldestblock " + listofOldestBlocks.toString() +" was called at "+ Simulate.sim.time());
 //				}
 //			});			
 		}
@@ -118,7 +114,7 @@ public class HintBasedClient extends Client {
 	}
 	
 	public CacheBlock removeForwardingBlock() {	
-		System.out.println("Client " + this.clientID +" was called at "+Simulate.sim.time());
+		//System.out.println("Client " + this.clientID +" was called at "+Simulate.sim.time());
 		Map.Entry<Integer, CacheBlock> entry = super.cache.entrySet().iterator().next();
 		
 		CacheBlock forwardingBlock = null;
@@ -134,10 +130,7 @@ public class HintBasedClient extends Client {
 		{
 			discardingBlock = this.removeForwardingBlock();
 			if(discardingBlock.IsMasterBlock())
-			{
 				super.removeHints(discardingBlock.getBlockID());
-				FileSystem.manager.removeHintsOfManager(discardingBlock.getBlockID());
-			}
 		}
 		forwardedBlock.setAccessTime(Simulate.sim.time());
 		this.cache.put(forwardedBlock.getBlockID(), forwardedBlock);

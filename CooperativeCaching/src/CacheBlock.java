@@ -28,6 +28,25 @@ public class CacheBlock {
 	
 	private int holdingClient;
 	
+	public CacheBlock(CacheBlock block) {
+		if(block != null)
+		{
+			this.blockID = block.blockID;
+			this.masterClientHolder = block.masterClientHolder;
+			this.holdingClient = block.holdingClient;
+			this.masterBlock = block.masterBlock;
+			this.accessTime= block.accessTime;
+		}
+	}
+	
+	public CacheBlock (int blockID) {
+		setBlockID(blockID);
+		setMasterClientHolder(-1);
+		setHoldingClient(-1);
+		setMasterBlock(true);
+		setAccessTime(0.0);
+	}
+	
 	/**
 	 * @return the blockID
 	 */
@@ -89,25 +108,6 @@ public class CacheBlock {
 	 */
 	public void setHoldingClient(int holdingClient) {
 		this.holdingClient = holdingClient;
-	}
-
-	public CacheBlock(CacheBlock block) {
-		if(block != null)
-		{
-			this.blockID = block.blockID;
-			this.masterClientHolder = block.masterClientHolder;
-			this.holdingClient = block.holdingClient;
-			this.masterBlock = block.masterBlock;
-			this.accessTime= block.accessTime;
-		}
-	}
-	
-	public CacheBlock (int blockID) {
-		setBlockID(blockID);
-		setMasterClientHolder(-1);
-		setHoldingClient(-1);
-		setMasterBlock(true);
-		setAccessTime(0.0);
 	}
 	
 	public Boolean IsMasterBlock() {

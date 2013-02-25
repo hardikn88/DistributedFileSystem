@@ -23,7 +23,7 @@ public class Manager {
 	public Hashtable <Integer,Integer> hints;
 	
 	public Manager() {
-		System.out.println("Manager was created");
+		//System.out.println("Manager was created");
 		hints = new Hashtable<Integer, Integer> ();
 	}
 	
