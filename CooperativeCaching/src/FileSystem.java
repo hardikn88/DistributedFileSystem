@@ -59,9 +59,9 @@ public class FileSystem {
 			if(config.getAlgorithm().equals("hint-based"))
 				setOfClient[i] = new HintBasedClient(i,cacheSize);
 			else if(config.getAlgorithm().equals("locality-based"))
-					setOfClient[i] = new LACClient(i, cacheSize, forwardingPoolSize);
+					setOfClient[i] = new LACClient(i, cacheSize, forwardingPoolSize, config.getEpochCounter(), ConfigReader.getEpochTimer());
 			else if(config.getAlgorithm().equals("servermemory-based"))
-					setOfClient[i] = new UsingServerMemoryClient(i, cacheSize);
+					setOfClient[i] = new UsingServerMemoryClient(i, cacheSize, forwardingPoolSize, config.getEpochCounter(), ConfigReader.getEpochTimer());
 	}
 	
 	public void SetUpManager() {

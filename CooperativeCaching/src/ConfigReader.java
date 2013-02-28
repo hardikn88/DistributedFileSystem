@@ -34,6 +34,10 @@ public class ConfigReader {
 	
 	private static long numberOfRequests;
 	
+	private int epochCounter;
+	
+	private static int epochTimer;
+	
 	private int blockSize;
 	
 	private String algorithm;
@@ -290,6 +294,34 @@ public class ConfigReader {
 		ConfigReader.latencyTime = latencyTime;
 	}
 
+	/**
+	 * @return the epochCounter
+	 */
+	public int getEpochCounter() {
+		return epochCounter;
+	}
+
+	/**
+	 * @param epochCounter the epochCounter to set
+	 */
+	public void setEpochCounter(int epochCounter) {
+		this.epochCounter = epochCounter;
+	}
+
+	/**
+	 * @return the epochTimer
+	 */
+	public static int getEpochTimer() {
+		return epochTimer;
+	}
+
+	/**
+	 * @param epochTimer the epochTimer to set
+	 */
+	public static void setEpochTimer(int epochTimer) {
+		ConfigReader.epochTimer = epochTimer;
+	}
+
 	public void readFile(File file) throws FileNotFoundException {
 		Scanner scanner = new Scanner(file);
 		if (scanner.hasNextLine())
@@ -345,6 +377,12 @@ public class ConfigReader {
 			setRequestSeed(Long.parseLong(scanner.nextLine()));
 		
 		if (scanner.hasNextLine())
-			setRequestLambda(Double.parseDouble(scanner.nextLine()));		
+			setRequestLambda(Double.parseDouble(scanner.nextLine()));	
+		
+		if (scanner.hasNextLine())
+			setEpochCounter(Integer.parseInt(scanner.nextLine()));
+		
+		if (scanner.hasNextLine())
+			setEpochTimer(Integer.parseInt(scanner.nextLine()));
 	}
 }

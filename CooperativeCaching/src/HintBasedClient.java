@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -41,7 +40,7 @@ public class HintBasedClient extends Client {
 				if(forwardingBlock.IsMasterBlock())
 				{
 					victimClient = findClientWithOldestBlock(forwardingBlock);
-					System.out.println("Victim Client is "+ FileSystem.setOfClient[victimClient]);
+					//System.out.println("Victim Client is "+ FileSystem.setOfClient[victimClient]);
 					if(victimClient != this.clientID) 
 					{
 						FileSystem.setOfClient[victimClient].forwardBlock(forwardingBlock);
@@ -59,7 +58,7 @@ public class HintBasedClient extends Client {
 
 	private int findClientWithOldestBlock(CacheBlock forwardingBlock) {	
 		//double txTime = 0.0;
-		final List <CacheBlock> listofOldestBlocks = Collections.synchronizedList(new ArrayList<CacheBlock>());
+		List <CacheBlock> listofOldestBlocks = new ArrayList<CacheBlock>();
 		
 		for(int i=0; i<FileSystem.getNumberOfClients(); i++) 
 		{
@@ -100,7 +99,7 @@ public class HintBasedClient extends Client {
 	}
 	
 	public CacheBlock getForwardingBlock() {	
-		System.out.println("Client " + this.clientID +" was called at "+Simulate.sim.time());
+		//System.out.println("Client " + this.clientID +" was called at "+Simulate.sim.time());
 		Map.Entry<Integer, CacheBlock> entry = null;
 		
 		if(super.cache.size() != 0)
@@ -125,12 +124,12 @@ public class HintBasedClient extends Client {
 	}
 	
 	public void forwardBlock(CacheBlock forwardedBlock) {
-		CacheBlock discardingBlock= null;
+		CacheBlock discardingCacheBlock= null;
 		if(cacheFull())
 		{
-			discardingBlock = this.removeForwardingBlock();
-			if(discardingBlock.IsMasterBlock())
-				super.removeHints(discardingBlock.getBlockID());
+			discardingCacheBlock = this.removeForwardingBlock();
+			if(discardingCacheBlock.IsMasterBlock())
+				super.removeHints(discardingCacheBlock.getBlockID());
 		}
 		forwardedBlock.setAccessTime(Simulate.sim.time());
 		this.cache.put(forwardedBlock.getBlockID(), forwardedBlock);

@@ -36,7 +36,7 @@ public abstract class Client {
 	
 	protected Map<Integer, CacheBlock> cache;
 	
-	private Hashtable<Integer, Integer> hints;
+	protected Hashtable<Integer, Integer> hints;
 	
 	private int clientCapacity;
 	
@@ -80,8 +80,8 @@ public abstract class Client {
 				
 		this.Eviction(block);
 		
-		System.out.printf ("Client %s contains hint %s%n",this, hints.toString());
-		System.out.printf ("Client %s contains cache %s%n",this, cache.toString());
+		//System.out.printf ("Client %s contains hint %s%n",this, hints.toString());
+		//System.out.printf ("Client %s contains cache %s%n",this, cache.toString());
 		
 		Simulate.sim.doAfter (Simulate.sim.time(), new Event() {
 			public void perform() { 
@@ -100,7 +100,7 @@ public abstract class Client {
 		
 	public CacheBlock lookUp(CacheBlockRequest request) {
 		int requestBlockID = request.getBlockID();
-		System.out.println("Lookup is performed for request " + requestBlockID + " by Client " + this);
+		//System.out.println("Lookup is performed for request " + requestBlockID + " by Client " + this);
 		
 		CacheBlock block = performLocalLookup(this, requestBlockID);
 		

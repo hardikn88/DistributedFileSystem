@@ -63,7 +63,7 @@ public class Simulate {
 		fs.SetUpServer();
 		fs.SetUpManager();
 		
-		int N = 10;
+		int N = 30;
 		//for(int N = config.getN_L(); N <= config.getN_U(); N+=config.getN_D()) {
 			fs.SetUpClient(N);
 			fs.ClearServerCache();
@@ -84,7 +84,7 @@ public class Simulate {
 		}
 		
 		System.out.println("Manager Hint" + FileSystem.manager.hints.toString());
-		System.out.println ("Block Access Time for all Client is: "+ accessTime + " Local Cache Hit is : "
+		System.out.println ("Block Access Time for all Client is: "+ accessTime/ConfigReader.getNumberOfRequests() + " Local Cache Hit is : "
 				+ localHit + " Remote Cache Hit is : " + remoteHit + " Disk hit is : " 
 				+ diskHit); 
 		//}
