@@ -36,6 +36,7 @@ public class Simulate {
 	private static Random blockPrng,clientPrng;
 	private static UniformPrng blockCasePrng;
 	private static ExponentialPrng requestPrng;
+	public static ExponentialPrng serverPrng;
 	private static long requestCount;
 	//private static 
 	
@@ -60,19 +61,20 @@ public class Simulate {
 		blockPrng = Random.getInstance(ConfigReader.getBlockSeed());
 		clientPrng = Random.getInstance(ConfigReader.getClientSeed());
 		requestPrng = new ExponentialPrng(Random.getInstance(ConfigReader.getRequestSeed()), config.getRequestLambda());
+		serverPrng = new ExponentialPrng(Random.getInstance(ConfigReader.getRequestSeed()), 6);
 		
 		FileSystem fs = new FileSystem(config);
 		fs.SetUpServer();
 		fs.SetUpManager();
 		
-		int N = 3;
+		int N = 60;
 		//for(int N = config.getN_L(); N <= config.getN_U(); N+=config.getN_D()) {
 			sim = new Simulation();
 			blockCasePrng = new UniformPrng(Random.getInstance(ConfigReader.getRequestSeed()), 0, config.getClientCacheSize()/config.getBlockSize()*N);
-			fs.SetUpClient(N);
 			fs.ClearServerCache();
 			fs.ClearManagerEntries();
-			System.out.println("START GENERATING REQUESTS");
+			fs.SetUpClient(N);
+			System.out.println(config.getAlgorithm());
 			generateRequest();
 			sim.run();
 			
@@ -86,7 +88,7 @@ public class Simulate {
 			diskHit+=FileSystem.setOfClient[i].diskCacheHit;
 		}
 		
-		System.out.println("Manager Hint" + FileSystem.manager.hints.toString());
+		//System.out.println("Manager Hint" + FileSystem.manager.hints.toString());
 		System.out.println ("Block Access Time for all Client is: "+ accessTime/ConfigReader.getNumberOfRequests() + " Local Cache Hit is : "
 				+ localHit + " Remote Cache Hit is : " + remoteHit + " Disk hit is : " 
 				+ diskHit); 
@@ -102,23 +104,30 @@ public class Simulate {
     private static void generateRequest() {
     	
     	requestCount++;
-    	//System.out.println ("Request Count: "+ requestCount);
-    	
-    	Client client = forwardingClient(); 
+    	Client client = null;
     	int blockID = -1;
     	
-    	if(ConfigReader.getBaseCase().equals("local"))
-    		blockID = client.getNextBlockNumber();
-    	else if(ConfigReader.getBaseCase().equals("remote"))
+    	if(ConfigReader.getBaseCase().equals("disk"))
     	{
-    		
-    		blockID = (int)blockCasePrng.next();
-    		while(blockID >= client.clientID*client.cacheSize && blockID <= (client.clientID+1)*client.cacheSize)
-    			blockID = (int)blockCasePrng.next();
+     		blockID = (int) (requestCount % ConfigReader.getNumberOfBlocks());
+     		client = FileSystem.setOfClient[(int) (requestCount%FileSystem.getNumberOfClients())];
     	}
     	else
-    		blockID = blockPrng.nextInt (ConfigReader.getNumberOfBlocks());
+    	{
+	    	client = forwardingClient();
+	    	if(ConfigReader.getBaseCase().equals("local"))
+	    		blockID = client.getNextBlockNumber();
+	    	else if(ConfigReader.getBaseCase().equals("remote"))
+	    		{
+		    		blockID = (int)blockCasePrng.next();
+		    		while(blockID >= client.clientID*client.cacheSize && blockID <= (client.clientID+1)*client.cacheSize)
+		    			blockID = (int)blockCasePrng.next();
+	    		}
+	    	else
+	    		blockID = blockPrng.nextInt (ConfigReader.getNumberOfBlocks());
+    	}
     	
+    	//System.out.println("Client " + client.clientID + " with block "+ blockID);
     	CacheBlockRequest blockRequest = new CacheBlockRequest (blockID);
     	
     	//System.out.printf ("%.3f %s request passed to client %s %n", sim.time(), blockRequest, client);

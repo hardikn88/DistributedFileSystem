@@ -113,16 +113,16 @@ public class LACClient extends Client {
 			addMetaDataToLRUStack(accessedBlock);
 		}
 		
-		System.out.println("LRU Stack Block " + accessedBlock);
-		System.out.println("Forwarding Pool : " + forwardingCandidatePool.toString()+ " of client: " + this.toString());
-		System.out.println("LRU Stack : " + LRU_Stack.toString()+" of client : " + this.toString() );
+		//System.out.println("LRU Stack Block " + accessedBlock);
+		//System.out.println("Forwarding Pool : " + forwardingCandidatePool.toString()+ " of client: " + this.toString());
+		//System.out.println("LRU Stack : " + LRU_Stack.toString()+" of client : " + this.toString() );
 		this.cache.put(block.getBlockID(), block);
 	}
 
 	private void forwarding() {
-		System.out.println("Forwarding Candidate is : "+ forwardingCandidatePool.entrySet().iterator().next().getValue());
+		//System.out.println("Forwarding Candidate is : "+ forwardingCandidatePool.entrySet().iterator().next().getValue());
 		CacheBlock forwardingBlock= this.removeForwardingBlock();
-		System.out.println("Forwarding Block is : "+ forwardingBlock);
+		//System.out.println("Forwarding Block is : "+ forwardingBlock);
 		MetaDataofBlock forwardingMetaDataofBlock = this.removeFromForwardingCandidatePool();
 		int victimClient = findClientWithLeastUtilizationValue(forwardingMetaDataofBlock);
 		if(victimClient != this.clientID)
@@ -176,7 +176,7 @@ public class LACClient extends Client {
 				victimClient = this.clientID;
 		}
 		
-		System.out.println("Victim Client is " + victimClient + " with MetaBlock " + forwardingMetaDataofBlock+" or CachedBlock "+ leastUtilizedCachedBlock);
+		//System.out.println("Victim Client is " + victimClient + " with MetaBlock " + forwardingMetaDataofBlock+" or CachedBlock "+ leastUtilizedCachedBlock);
 		return victimClient;
 	}
 
@@ -241,7 +241,7 @@ public class LACClient extends Client {
 		MetaDataofBlock metaDataofDiscardingCacheBlock = null, metaDataofForwardedBlock = null;
 		CacheBlock discardingCacheBlock = null;
 		
-		System.out.println("Forwarded block "+forwardedBlock +" is Master Block "+ forwardedBlock.IsMasterBlock() + " to client "+ this +" with LRU Stack \n"+ LRU_Stack.toString());
+		//System.out.println("Forwarded block "+forwardedBlock +" is Master Block "+ forwardedBlock.IsMasterBlock() + " to client "+ this +" with LRU Stack \n"+ LRU_Stack.toString());
 		
 		if(metaDataPresentInLRUStack(forwardedBlock.getBlockID()))
 			metaDataofForwardedBlock = getMetaDataFromLRUStack(forwardedBlock.getBlockID());
@@ -279,7 +279,7 @@ public class LACClient extends Client {
 			if(!this.cache.containsKey(forwardedBlock.getBlockID()))
 				this.cache.put(forwardedBlock.getBlockID(), forwardedBlock);
 		
-		System.out.println("After adding block TO LRU stack " + LRU_Stack.toString());
+		//System.out.println("After adding block TO LRU stack " + LRU_Stack.toString());
 	}
 	
 	private MetaDataofBlock removeFromForwardingCandidatePool() {

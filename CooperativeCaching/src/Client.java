@@ -74,13 +74,10 @@ public abstract class Client {
 		this.fillCache = fillCache;
 				
 		if(fillCache)
-		{
 			this.blockPrng = new UniformPrng(Random.getInstance(ConfigReader.getBlockSeed()), clientID*cacheSize, (clientID+1)*cacheSize);
-			fillCacheBeforeRequestsGenerated();
-		}
 	}
 
-    private void fillCacheBeforeRequestsGenerated() {
+    public void fillCacheBeforeRequestsGenerated() {
     	//System.out.println("Filling Cache");
     	CacheBlockRequest blockRequest = null;
     	for(int i = this.clientID * cacheSize ; i < (this.clientID + 1) * cacheSize; i++)
@@ -114,15 +111,15 @@ public abstract class Client {
 				
 		this.Eviction(block);
 		
-		System.out.printf ("Client %s contains hint %s%n",this, hints.toString());
-		System.out.printf ("Client %s contains cache %s%n",this, cache.toString());
+		//System.out.printf ("Client %s contains hint %s%n",this, hints.toString());
+		//System.out.printf ("Client %s contains cache %s%n",this, cache.toString());
 		
 		if(this.fillCache)
 			removeFromQueue();
 		else
 		{
 			//System.out.println("fill Cache" + this.fillCache);
-			Simulate.sim.doAfter (Simulate.sim.time(), new Event() {
+			Simulate.sim.doAfter (Simulate.serverPrng.next(), new Event() {
 				public void perform() { 
 					removeFromQueue();
 				}
@@ -140,7 +137,7 @@ public abstract class Client {
 		
 	public CacheBlock lookUp(CacheBlockRequest request) {
 		int requestBlockID = request.getBlockID();
-		System.out.println("Lookup is performed for request " + requestBlockID + " by Client " + this);
+		//System.out.println("Lookup is performed for request " + requestBlockID + " by Client " + this);
 		
 		CacheBlock block = performLocalLookup(this, requestBlockID);
 		

@@ -115,6 +115,7 @@ public class CacheBlock {
 	}
 	
 	public String toString() {
-		return "Blocks " + blockID;
+		return "Blocks " + blockID + " is master block " + IsMasterBlock() + " accesstime "+
+				accessTime ;
 	}
 }

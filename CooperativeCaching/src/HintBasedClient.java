@@ -24,19 +24,19 @@ import java.util.Map;
 public class HintBasedClient extends Client {
 	
 	public HintBasedClient(int clientID, final int cacheSize, Boolean fillCache) {
-		super(clientID, cacheSize, cacheSize, fillCache);
+		super(clientID, cacheSize, cacheSize, fillCache);	
 	}
 	
 	@Override
 	public void Eviction(CacheBlock block) {
 		CacheBlock forwardingBlock= null;
 		int victimClient = -1;
-		
 		if(!cacheContainsBlock(block)) 
-		{			
+		{	
 			if(cacheFull()) 
 			{
 				forwardingBlock = this.removeForwardingBlock();
+				//System.out.println("Forwarding Block is : "+ forwardingBlock);
 				if(forwardingBlock.IsMasterBlock())
 				{
 					victimClient = findClientWithOldestBlock(forwardingBlock);
@@ -95,6 +95,7 @@ public class HintBasedClient extends Client {
 					victimClient = forwardingBlockFromOtherClient.getHoldingClient();
 				}
 			}
+		//System.out.println("Victim Client is "+ FileSystem.setOfClient[victimClient] + " with block " + oldestBlock);
 		return victimClient;
 	}
 	
@@ -124,6 +125,7 @@ public class HintBasedClient extends Client {
 	}
 	
 	public void forwardBlock(CacheBlock forwardedBlock) {
+		//System.out.println("Forwarded block "+forwardedBlock + " to client "+ this);
 		CacheBlock discardingCacheBlock= null;
 		if(cacheFull())
 		{
