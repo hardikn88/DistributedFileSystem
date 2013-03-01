@@ -23,12 +23,14 @@ public class MetaDataofBlock {
 	private BlockType blockType;
 	private int epochCounter;
 	private int holdingClient;
+	private int locality;
 	
 	public MetaDataofBlock(MetaDataofBlock block) {
 		this.blockID = block.blockID;
 		this.blockType = block.blockType;
 		this.recency = block.recency;
 		this.epochCounter = block.epochCounter;
+		this.locality = block.locality;
 	}
 	
 	public MetaDataofBlock(int blockID) {
@@ -36,6 +38,7 @@ public class MetaDataofBlock {
 		this.recency = -1.0;
 		this.blockType = BlockType.NOTPRESENT;
 		this.epochCounter = -1;
+		this.locality = 0;
 	}
 
 	/**
@@ -108,7 +111,21 @@ public class MetaDataofBlock {
 		this.holdingClient = holdingClient;
 	}
 	
+	/**
+	 * @return the locality
+	 */
+	public int getLocality() {
+		return locality;
+	}
+
+	/**
+	 * @param locality the locality to set
+	 */
+	public void setLocality(int locality) {
+		this.locality = locality;
+	}
+
 	public String toString() {
-		return(blockType + " Block : " + this.blockID + " with recency : "+ this.recency+ " and epoch Counter : " + this.epochCounter);
+		return(blockType + " Block:" + this.blockID + " with recency:"+ this.recency+ " and epoch Counter:" + this.epochCounter + " and locality:" + this.locality);
 	}
 }

@@ -23,8 +23,8 @@ import java.util.Map;
 
 public class HintBasedClient extends Client {
 	
-	public HintBasedClient(int clientID, final int cacheSize) {
-		super(clientID, cacheSize, cacheSize);
+	public HintBasedClient(int clientID, final int cacheSize, Boolean fillCache) {
+		super(clientID, cacheSize, cacheSize, fillCache);
 	}
 	
 	@Override

@@ -24,7 +24,7 @@ public class ConfigReader {
 	
 	private int N_L, N_U, N_D;
 	
-	private long blockSeed, clientSeed, requestSeed;
+	private static long blockSeed, clientSeed, requestSeed;
 	
 	private double requestLambda;
 	
@@ -43,6 +43,8 @@ public class ConfigReader {
 	private String algorithm;
 	
 	private static double diskAccessTime, clientCacheAccessTime, latencyTime; /* remoteCacheAccessTime*/;
+	
+	private static String conditionsforServerMemoryAlgorithm, baseCase;
 	
 	public ConfigReader(File file) throws FileNotFoundException {
 		readFile(file);
@@ -93,43 +95,43 @@ public class ConfigReader {
 	/**
 	 * @return the blockSeed
 	 */
-	public long getBlockSeed() {
+	public static long getBlockSeed() {
 		return blockSeed;
 	}
 
 	/**
 	 * @param blockSeed the blockSeed to set
 	 */
-	public void setBlockSeed(long blockSeed) {
-		this.blockSeed = blockSeed;
+	public static void setBlockSeed(long blockSeed) {
+		ConfigReader.blockSeed = blockSeed;
 	}
 
 	/**
 	 * @return the clientSeed
 	 */
-	public long getClientSeed() {
+	public static long getClientSeed() {
 		return clientSeed;
 	}
 
 	/**
 	 * @param clientSeed the clientSeed to set
 	 */
-	public void setClientSeed(long clientSeed) {
-		this.clientSeed = clientSeed;
+	public static void setClientSeed(long clientSeed) {
+		ConfigReader.clientSeed = clientSeed;
 	}
 
 	/**
 	 * @return the requestSeed
 	 */
-	public long getRequestSeed() {
+	public static long getRequestSeed() {
 		return requestSeed;
 	}
 
 	/**
 	 * @param requestSeed the requestSeed to set
 	 */
-	public void setRequestSeed(long requestSeed) {
-		this.requestSeed = requestSeed;
+	public static void setRequestSeed(long requestSeed) {
+		ConfigReader.requestSeed = requestSeed;
 	}
 
 	/**
@@ -322,6 +324,35 @@ public class ConfigReader {
 		ConfigReader.epochTimer = epochTimer;
 	}
 
+	/**
+	 * @return the conditionsforServerMemoryAlgorithm
+	 */
+	public static String getConditionsforServerMemoryAlgorithm() {
+		return conditionsforServerMemoryAlgorithm;
+	}
+
+	/**
+	 * @param conditionsforServerMemoryAlgorithm the conditionsforServerMemoryAlgorithm to set
+	 */
+	public static void setConditionsforServerMemoryAlgorithm(
+			String conditionsforServerMemoryAlgorithm) {
+		ConfigReader.conditionsforServerMemoryAlgorithm = conditionsforServerMemoryAlgorithm;
+	}
+
+	/**
+	 * @return the baseCase
+	 */
+	public static String getBaseCase() {
+		return baseCase;
+	}
+
+	/**
+	 * @param baseCase the baseCase to set
+	 */
+	public static void setBaseCase(String baseCase) {
+		ConfigReader.baseCase = baseCase;
+	}
+
 	public void readFile(File file) throws FileNotFoundException {
 		Scanner scanner = new Scanner(file);
 		if (scanner.hasNextLine())
@@ -384,5 +415,11 @@ public class ConfigReader {
 		
 		if (scanner.hasNextLine())
 			setEpochTimer(Integer.parseInt(scanner.nextLine()));
+		
+		if (scanner.hasNextLine())
+			setConditionsforServerMemoryAlgorithm(scanner.nextLine());
+		
+		if (scanner.hasNextLine())
+			setBaseCase(scanner.nextLine());
 	}
 }

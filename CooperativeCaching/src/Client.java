@@ -12,7 +12,10 @@ import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
+
+import edu.rit.numeric.UniformPrng;
 import edu.rit.sim.Event;
+import edu.rit.util.Random;
 
 /**
  * Class Status provides the functionality to set the status for the Resources
@@ -40,7 +43,13 @@ public abstract class Client {
 	
 	private int clientCapacity;
 	
-	public Client(int clientID, final int cacheSize, final int clientCapacity) {
+	public int cacheSize; 
+	
+	private UniformPrng blockPrng;
+	
+	private Boolean fillCache; 
+	
+	public Client(int clientID, final int cacheSize, final int clientCapacity, Boolean fillCache) {
 		
 		this.clientID = clientID;
 		
@@ -58,10 +67,35 @@ public abstract class Client {
 		
 		this.clientCapacity = clientCapacity;
 		
-		this.cache = Collections.synchronizedMap(new LinkedHashMap<Integer, CacheBlock>(cacheSize, 1.1f, true));	
+		this.cacheSize = cacheSize;
+		
+		this.cache = Collections.synchronizedMap(new LinkedHashMap<Integer, CacheBlock>(cacheSize, 1.1f, true));
+		
+		this.fillCache = fillCache;
+				
+		if(fillCache)
+		{
+			this.blockPrng = new UniformPrng(Random.getInstance(ConfigReader.getBlockSeed()), clientID*cacheSize, (clientID+1)*cacheSize);
+			fillCacheBeforeRequestsGenerated();
+		}
 	}
 
-    public void addToQueue (CacheBlockRequest blockRequest) {
+    private void fillCacheBeforeRequestsGenerated() {
+    	//System.out.println("Filling Cache");
+    	CacheBlockRequest blockRequest = null;
+    	for(int i = this.clientID * cacheSize ; i < (this.clientID + 1) * cacheSize; i++)
+    	{
+    		blockRequest = new CacheBlockRequest (i);
+    		addToQueue(blockRequest);
+    	}
+    	this.fillCache = false;
+    	this.blockAccessTime = 0.0;
+    	this.localCacheHit = 0;
+    	this.remoteCacheHit = 0;
+    	this.diskCacheHit = 0;
+	}
+
+	public void addToQueue (CacheBlockRequest blockRequest) {
     	requestQueue.add (blockRequest);
     	//System.out.printf ("%.3f %s received by %s%n",Simulate.sim.time(), requestQueue.toString(), this);
 	    
@@ -80,14 +114,20 @@ public abstract class Client {
 				
 		this.Eviction(block);
 		
-		//System.out.printf ("Client %s contains hint %s%n",this, hints.toString());
-		//System.out.printf ("Client %s contains cache %s%n",this, cache.toString());
+		System.out.printf ("Client %s contains hint %s%n",this, hints.toString());
+		System.out.printf ("Client %s contains cache %s%n",this, cache.toString());
 		
-		Simulate.sim.doAfter (Simulate.sim.time(), new Event() {
-			public void perform() { 
-				removeFromQueue();
-			}
-		});
+		if(this.fillCache)
+			removeFromQueue();
+		else
+		{
+			//System.out.println("fill Cache" + this.fillCache);
+			Simulate.sim.doAfter (Simulate.sim.time(), new Event() {
+				public void perform() { 
+					removeFromQueue();
+				}
+			});
+		}
 	}
 	
 	private void removeFromQueue() {
@@ -100,7 +140,7 @@ public abstract class Client {
 		
 	public CacheBlock lookUp(CacheBlockRequest request) {
 		int requestBlockID = request.getBlockID();
-		//System.out.println("Lookup is performed for request " + requestBlockID + " by Client " + this);
+		System.out.println("Lookup is performed for request " + requestBlockID + " by Client " + this);
 		
 		CacheBlock block = performLocalLookup(this, requestBlockID);
 		
@@ -222,6 +262,10 @@ public abstract class Client {
 	protected void removeHints(int masterBlockID) {
 		this.hints.remove(masterBlockID);
 		FileSystem.manager.removeHintsOfManager(masterBlockID);
+	}
+	
+	public int getNextBlockNumber() {
+		 return (int)blockPrng.next();
 	}
 	
 	abstract public void Eviction(CacheBlock block);

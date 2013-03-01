@@ -7,6 +7,7 @@
 //******************************************************************************
 
 import edu.rit.numeric.ExponentialPrng;
+import edu.rit.numeric.UniformPrng;
 //import edu.rit.numeric.ListXYSeries;
 //import edu.rit.numeric.plot.Plot;
 import edu.rit.sim.Event;
@@ -33,6 +34,7 @@ public class Simulate {
 
 	public static Simulation sim;
 	private static Random blockPrng,clientPrng;
+	private static UniformPrng blockCasePrng;
 	private static ExponentialPrng requestPrng;
 	private static long requestCount;
 	//private static 
@@ -55,21 +57,22 @@ public class Simulate {
 			return;
 		}
 		
-		blockPrng = Random.getInstance(config.getBlockSeed());
-		clientPrng = Random.getInstance(config.getClientSeed());
-		requestPrng = new ExponentialPrng(Random.getInstance(config.getRequestSeed()), config.getRequestLambda());
+		blockPrng = Random.getInstance(ConfigReader.getBlockSeed());
+		clientPrng = Random.getInstance(ConfigReader.getClientSeed());
+		requestPrng = new ExponentialPrng(Random.getInstance(ConfigReader.getRequestSeed()), config.getRequestLambda());
 		
 		FileSystem fs = new FileSystem(config);
 		fs.SetUpServer();
 		fs.SetUpManager();
 		
-		int N = 30;
+		int N = 3;
 		//for(int N = config.getN_L(); N <= config.getN_U(); N+=config.getN_D()) {
+			sim = new Simulation();
+			blockCasePrng = new UniformPrng(Random.getInstance(ConfigReader.getRequestSeed()), 0, config.getClientCacheSize()/config.getBlockSize()*N);
 			fs.SetUpClient(N);
 			fs.ClearServerCache();
 			fs.ClearManagerEntries();
-			
-			sim = new Simulation();
+			System.out.println("START GENERATING REQUESTS");
 			generateRequest();
 			sim.run();
 			
@@ -101,8 +104,22 @@ public class Simulate {
     	requestCount++;
     	//System.out.println ("Request Count: "+ requestCount);
     	
-    	Client client = forwardingClient();    	
-    	CacheBlockRequest blockRequest = new CacheBlockRequest (blockPrng.nextInt (ConfigReader.getNumberOfBlocks()));
+    	Client client = forwardingClient(); 
+    	int blockID = -1;
+    	
+    	if(ConfigReader.getBaseCase().equals("local"))
+    		blockID = client.getNextBlockNumber();
+    	else if(ConfigReader.getBaseCase().equals("remote"))
+    	{
+    		
+    		blockID = (int)blockCasePrng.next();
+    		while(blockID >= client.clientID*client.cacheSize && blockID <= (client.clientID+1)*client.cacheSize)
+    			blockID = (int)blockCasePrng.next();
+    	}
+    	else
+    		blockID = blockPrng.nextInt (ConfigReader.getNumberOfBlocks());
+    	
+    	CacheBlockRequest blockRequest = new CacheBlockRequest (blockID);
     	
     	//System.out.printf ("%.3f %s request passed to client %s %n", sim.time(), blockRequest, client);
     	client.addToQueue (blockRequest);

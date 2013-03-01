@@ -29,10 +29,9 @@ public class UsingServerMemoryClient extends Client{
 	private Map<Integer, MetaDataofBlock> forwardingCandidatePool;
 	private int forwardingCandidatePoolCapacity;
 	private int epochCounter, epochTimer;
-	private CacheBlock forwardingBlock;
 	
-	public UsingServerMemoryClient(int clientID, final int cacheSize, final int forwardingPoolSize, int epochCounter, int epochTimer) {
-		super(clientID, cacheSize, cacheSize-forwardingPoolSize);
+	public UsingServerMemoryClient(int clientID, final int cacheSize, final int forwardingPoolSize, int epochCounter, int epochTimer, Boolean fillCache) {
+		super(clientID, cacheSize, cacheSize-forwardingPoolSize, fillCache);
 		this.forwardingCandidatePoolCapacity = forwardingPoolSize;
 		this.LRU_Stack = Collections.synchronizedMap(new LinkedHashMap<Integer, MetaDataofBlock>(cacheSize, 1.1f, true));
 		this.forwardingCandidatePool = Collections.synchronizedMap(new LinkedHashMap<Integer, MetaDataofBlock>(forwardingPoolSize, 1.1f, true));
@@ -94,14 +93,21 @@ public class UsingServerMemoryClient extends Client{
 		
 		if(accessedBlock != null)
 		{
+			accessedBlock.setLocality(accessedBlock.getLocality()+1);
 			accessedBlock.setRecency(Simulate.sim.time());
 			accessedBlock.setEpochCounter(this.epochCounter);
 			this.epochTimer--;
+			//System.out.println("Epoch Timer at " + this + " is " + epochTimer);
+			
 			if(this.epochTimer == 0)
 			{
+				this.epochCounter++;
+				this.resetEpochTimer();
 				for(int i=0; i<FileSystem.getNumberOfClients(); i++) 
 				{
-					((UsingServerMemoryClient) FileSystem.setOfClient[i]).updateEpochCounter(this.epochCounter+1);
+					if(i == this.clientID )
+						continue;
+					((UsingServerMemoryClient) FileSystem.setOfClient[i]).updateEpochCounter(this.epochCounter);
 					((UsingServerMemoryClient) FileSystem.setOfClient[i]).resetEpochTimer();
 				}
 			}
@@ -119,22 +125,26 @@ public class UsingServerMemoryClient extends Client{
 		CacheBlock forwardingBlock= this.removeForwardingBlock();
 		System.out.println("Forwarding Block is : "+ forwardingBlock);
 		MetaDataofBlock forwardingMetaDataofBlock = this.removeFromForwardingCandidatePool();
-		int victimClient = findClientWithLeastUtilizationValue(forwardingMetaDataofBlock);
-		if(victimClient != this.clientID)
+		
+		if(forwardingBlock.IsMasterBlock())
 		{
-			FileSystem.setOfClient[victimClient].forwardBlock(forwardingBlock);
-			if(forwardingBlock.IsMasterBlock())
+			int victimClient = findClientWithLeastUtilizationValue(forwardingMetaDataofBlock);
+			if(victimClient != this.clientID)
 			{
+				FileSystem.setOfClient[victimClient].forwardBlock(forwardingBlock);
 				super.updateHints(forwardingBlock.getBlockID(), victimClient);
 				FileSystem.manager.updateHintsOfManager(forwardingBlock.getBlockID(), victimClient);
 			}
-		}
-		else
-			if(forwardingBlock.IsMasterBlock())
+			else
+			{
 				super.removeHints(forwardingBlock.getBlockID());
+				this.useAdditionalMemory(forwardingBlock, forwardingMetaDataofBlock);
+			}
+		}
 	}
 	
-	private int findClientWithLeastUtilizationValue(MetaDataofBlock forwardingBlock) {
+	private int findClientWithLeastUtilizationValue(MetaDataofBlock forwardingMetaDataofBlock) {
+		
 		List <MetaDataofBlock> listofMetaDataofOldestCachedBlocks = new ArrayList<MetaDataofBlock>();
 		
 		for(int i=0; i<FileSystem.getNumberOfClients(); i++) 
@@ -151,19 +161,26 @@ public class UsingServerMemoryClient extends Client{
 			}
 		}
 		
-		MetaDataofBlock leastUtilizedBlock = forwardingBlock;
+		//MetaDataofBlock leastUtilizedCachedBlock = forwardingMetaDataofBlock;
+		MetaDataofBlock leastUtilizedCachedBlock = this.fetchMetaDataofCachedBlockWithLargestRecency();		
 		int victimClient = this.clientID;
 		
 		if(listofMetaDataofOldestCachedBlocks!=null)
 			for (MetaDataofBlock leastUtilizedCachedBlockFromOtherClient : listofMetaDataofOldestCachedBlocks) {
-				if(leastUtilizedCachedBlockFromOtherClient.getEpochCounter() < leastUtilizedBlock.getEpochCounter())
+				if(leastUtilizedCachedBlockFromOtherClient.getEpochCounter() < leastUtilizedCachedBlock.getEpochCounter())
 				{
-					leastUtilizedBlock = leastUtilizedCachedBlockFromOtherClient;
+					leastUtilizedCachedBlock = leastUtilizedCachedBlockFromOtherClient;
 					victimClient = leastUtilizedCachedBlockFromOtherClient.getHoldingClient();
 				}
 			}
 		
-		System.out.println("Victim Client is " + victimClient + " with MetaBlock " + leastUtilizedBlock);
+		if(victimClient != this.clientID) 
+		{
+			if(forwardingMetaDataofBlock.getEpochCounter() <= leastUtilizedCachedBlock.getEpochCounter())
+				victimClient = this.clientID;
+		}
+		
+		System.out.println("Victim Client is " + victimClient + " with MetaBlock " + forwardingMetaDataofBlock+" or CachedBlock "+ leastUtilizedCachedBlock);
 		return victimClient;
 	}
 
@@ -210,12 +227,12 @@ public class UsingServerMemoryClient extends Client{
 	private MetaDataofBlock getMetaDataFromLRUStack(int blockID) {
 		return new MetaDataofBlock(LRU_Stack.get(blockID));
 	}
-	
+
 	@Override
 	public CacheBlock getForwardingBlock() {
 		return null;
 	}
-
+	
 	@Override
 	public CacheBlock removeForwardingBlock() {
 		MetaDataofBlock forwardingMetaData = forwardingCandidatePool.entrySet().iterator().next().getValue();
@@ -227,6 +244,8 @@ public class UsingServerMemoryClient extends Client{
 	public void forwardBlock(CacheBlock forwardedBlock) {
 		MetaDataofBlock metaDataofDiscardingCacheBlock = null, metaDataofForwardedBlock = null;
 		CacheBlock discardingCacheBlock = null;
+		
+		System.out.println("Forwarded block "+forwardedBlock +" is Master Block "+ forwardedBlock.IsMasterBlock() + " to client "+ this +" with LRU Stack \n"+ LRU_Stack.toString());
 		
 		if(metaDataPresentInLRUStack(forwardedBlock.getBlockID()))
 			metaDataofForwardedBlock = getMetaDataFromLRUStack(forwardedBlock.getBlockID());
@@ -242,27 +261,26 @@ public class UsingServerMemoryClient extends Client{
 				metaDataofDiscardingCacheBlock.setBlockType(BlockType.SHADOWBLOCK);
 				addMetaDataToLRUStack(metaDataofDiscardingCacheBlock);
 				if(discardingCacheBlock.IsMasterBlock())
+				{
 					super.removeHints(discardingCacheBlock.getBlockID());
+					this.useAdditionalMemory(discardingCacheBlock, metaDataofDiscardingCacheBlock);
+				}
 			}
 		}
 		
 		if(metaDataofForwardedBlock != null)
 		{
 			forwardingCandidatePool.remove(metaDataofForwardedBlock.getBlockID());
+			metaDataofForwardedBlock.setLocality(metaDataofForwardedBlock.getLocality()+1);
 			metaDataofForwardedBlock.setBlockType(BlockType.CACHEDBLOCK);
 			metaDataofForwardedBlock.setRecency(Simulate.sim.time());
 			metaDataofForwardedBlock.setEpochCounter(this.epochCounter);
 			addMetaDataToLRUStack(metaDataofForwardedBlock);
 		}
 		
-		if(forwardedBlock.IsMasterBlock())
-		{
-			this.cache.put(forwardedBlock.getBlockID(), forwardedBlock);
-			this.updateHints(forwardedBlock.getBlockID(), this.clientID);
-		}
-		else
-			if(!this.cache.containsKey(forwardedBlock.getBlockID()))
-				this.cache.put(forwardedBlock.getBlockID(), forwardedBlock);
+		this.cache.put(forwardedBlock.getBlockID(), forwardedBlock);
+		this.updateHints(forwardedBlock.getBlockID(), this.clientID);
+		System.out.println("After adding block TO LRU stack " + LRU_Stack.toString());
 	}
 	
 	private MetaDataofBlock removeFromForwardingCandidatePool() {
@@ -274,13 +292,18 @@ public class UsingServerMemoryClient extends Client{
 	}
 	
 	public void updateEpochCounter(int epochCounter) {
-		this.epochCounter = epochCounter;
+			this.epochCounter = epochCounter;
 	}
 	
 	public void resetEpochTimer() {
 		this.epochTimer = ConfigReader.getEpochTimer();
 	}
 
+	private void useAdditionalMemory(CacheBlock forwardingBlock, MetaDataofBlock forwardingMetaDataofBlock) {
+		if((ConfigReader.getConditionsforServerMemoryAlgorithm().equalsIgnoreCase("twoConditions")
+				&&forwardingMetaDataofBlock.getLocality()>1)||ConfigReader.getConditionsforServerMemoryAlgorithm().equalsIgnoreCase("oneCondition"))
+			FileSystem.server.addBlockToServerCache(forwardingBlock);
+	}
 	
 	public String toString() {
 		return("ServerMemory-Based "+ super.toString());

@@ -55,13 +55,18 @@ public class FileSystem {
 		
 		int forwardingPoolSize = (int) config.getForwardingPoolSize()/config.getBlockSize();
 		
+		Boolean fillCache = false;
+		
+		if(ConfigReader.getBaseCase().equalsIgnoreCase("local") || ConfigReader.getBaseCase().equalsIgnoreCase("remote"))
+			fillCache = true;
+		
 		for(int i = 0 ; i < N ; i++)
 			if(config.getAlgorithm().equals("hint-based"))
-				setOfClient[i] = new HintBasedClient(i,cacheSize);
+				setOfClient[i] = new HintBasedClient(i, cacheSize, fillCache);
 			else if(config.getAlgorithm().equals("locality-based"))
-					setOfClient[i] = new LACClient(i, cacheSize, forwardingPoolSize, config.getEpochCounter(), ConfigReader.getEpochTimer());
+					setOfClient[i] = new LACClient(i, cacheSize, forwardingPoolSize, config.getEpochCounter(), ConfigReader.getEpochTimer(), fillCache);
 			else if(config.getAlgorithm().equals("servermemory-based"))
-					setOfClient[i] = new UsingServerMemoryClient(i, cacheSize, forwardingPoolSize, config.getEpochCounter(), ConfigReader.getEpochTimer());
+					setOfClient[i] = new UsingServerMemoryClient(i, cacheSize, forwardingPoolSize, config.getEpochCounter(), ConfigReader.getEpochTimer(), fillCache);
 	}
 	
 	public void SetUpManager() {

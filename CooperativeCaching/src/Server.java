@@ -35,16 +35,11 @@ public class Server {
 			@Override
             public boolean removeEldestEntry(Map.Entry<Integer, CacheBlock> eldest)  
             {
-                //when to remove the eldest entry
                 return size() > cacheSize ;   //size exceeded the max allowed
             }
         });
 	}
 	
-	public String toString() {
-		return "Server" ;
-	}
-
 	public CacheBlock performLookUpInServerCache(Client client, int requestBlockID) {
 		client.blockAccessTime += ConfigReader.getClientCacheAccessTime();	
 		CacheBlock tempBlock = cache.get(requestBlockID);
@@ -58,5 +53,14 @@ public class Server {
 			}
 		}	
 		return block;
+	}
+	
+	public void addBlockToServerCache(CacheBlock block)	{
+		if(block != null)
+			this.cache.put(block.getBlockID(), block);
+	}
+	
+	public String toString() {
+		return "Server" ;
 	}
 }
