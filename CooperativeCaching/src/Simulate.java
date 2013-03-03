@@ -61,39 +61,46 @@ public class Simulate {
 		blockPrng = Random.getInstance(ConfigReader.getBlockSeed());
 		clientPrng = Random.getInstance(ConfigReader.getClientSeed());
 		requestPrng = new ExponentialPrng(Random.getInstance(ConfigReader.getRequestSeed()), config.getRequestLambda());
-		serverPrng = new ExponentialPrng(Random.getInstance(ConfigReader.getRequestSeed()), 6);
+		serverPrng = new ExponentialPrng(Random.getInstance(ConfigReader.getRequestSeed()), 12);
 		
 		FileSystem fs = new FileSystem(config);
 		fs.SetUpServer();
 		fs.SetUpManager();
 		
-		int N = 60;
-		//for(int N = config.getN_L(); N <= config.getN_U(); N+=config.getN_D()) {
+		double accessTime;
+		long localHit, remoteHit, diskHit;
+		//int N = 3;
+		System.out.println(config.getAlgorithm());
+		
+		for(int N = config.getN_L(); N <= config.getN_U(); N+=config.getN_D()) 
+		{
 			sim = new Simulation();
 			blockCasePrng = new UniformPrng(Random.getInstance(ConfigReader.getRequestSeed()), 0, config.getClientCacheSize()/config.getBlockSize()*N);
-			fs.ClearServerCache();
-			fs.ClearManagerEntries();
+			accessTime = 0.0;
+			localHit = 0 ;
+			remoteHit = 0 ;
+			diskHit = 0;
 			fs.SetUpClient(N);
-			System.out.println(config.getAlgorithm());
 			generateRequest();
 			sim.run();
 			
-		double accessTime= 0.0;
-		long localHit = 0 , remoteHit = 0 , diskHit = 0;
-		for(int i=0 ; i < N ; i++)
-		{
-			accessTime+= FileSystem.setOfClient[i].blockAccessTime;
-			localHit+= FileSystem.setOfClient[i].localCacheHit;
-			remoteHit+=FileSystem.setOfClient[i].remoteCacheHit;
-			diskHit+=FileSystem.setOfClient[i].diskCacheHit;
-		}
-		
-		//System.out.println("Manager Hint" + FileSystem.manager.hints.toString());
-		System.out.println ("Block Access Time for all Client is: "+ accessTime/ConfigReader.getNumberOfRequests() + " Local Cache Hit is : "
-				+ localHit + " Remote Cache Hit is : " + remoteHit + " Disk hit is : " 
-				+ diskHit); 
-		//}
-		
+			for(int i=0 ; i < N ; i++)
+			{
+				accessTime+= FileSystem.setOfClient[i].blockAccessTime;
+				localHit+= FileSystem.setOfClient[i].localCacheHit;
+				remoteHit+=FileSystem.setOfClient[i].remoteCacheHit;
+				diskHit+=FileSystem.setOfClient[i].diskCacheHit;
+			}
+						
+			System.out.println ("Block Access Time for all Client is: "+ accessTime/ConfigReader.getNumberOfRequests() + " Local Cache Hit is : "
+					+ localHit + " Remote Cache Hit is : " + remoteHit + " Disk hit is : " 
+					+ diskHit);
+			
+			FileSystem.server.clearServerCache();
+			FileSystem.manager.clearManagerEntries();
+			fs.clearUpClients();
+			requestCount = 0;
+		}		
 	}
 	
     private static void usage() {
@@ -130,7 +137,7 @@ public class Simulate {
     	//System.out.println("Client " + client.clientID + " with block "+ blockID);
     	CacheBlockRequest blockRequest = new CacheBlockRequest (blockID);
     	
-    	//System.out.printf ("%.3f %s request passed to client %s %n", sim.time(), blockRequest, client);
+    	System.out.printf ("%.3f %s request passed to client %s %n", sim.time(), blockRequest, client);
     	client.addToQueue (blockRequest);
     	
     	if(requestCount<ConfigReader.getNumberOfRequests())

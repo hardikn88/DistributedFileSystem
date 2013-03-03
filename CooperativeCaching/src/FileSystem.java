@@ -78,7 +78,6 @@ public class FileSystem {
 				else if(config.getAlgorithm().equals("servermemory-based"))
 					setOfClient[i].fillCacheBeforeRequestsGenerated();
 		}
-
 	}
 	
 	public void SetUpManager() {
@@ -89,13 +88,10 @@ public class FileSystem {
 		int cacheSize = (int) config.getServerCacheSize()/config.getBlockSize();
 		server = new Server(cacheSize);
 	}
-	
-	public void ClearServerCache() {
-		
+
+	public void clearUpClients() {
+		if(setOfClient != null)
+			for(int i = 0 ; i < numberOfClients ; i++)
+				setOfClient[i] = null;
 	}
-	
-	public void ClearManagerEntries() {
-		
-	}
-	
 }

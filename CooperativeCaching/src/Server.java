@@ -63,4 +63,9 @@ public class Server {
 	public String toString() {
 		return "Server" ;
 	}
+
+	public void clearServerCache() {
+		if(this.cache != null)
+			this.cache.clear();
+	}
 }

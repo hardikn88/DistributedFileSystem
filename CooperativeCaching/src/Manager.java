@@ -46,5 +46,10 @@ public class Manager {
 	public void removeHintsOfManager(int blockID) {
 		this.hints.remove(blockID);
 	}
+
+	public void clearManagerEntries() {
+		if(this.hints != null)
+			this.hints.clear();
+	}
 	
 }

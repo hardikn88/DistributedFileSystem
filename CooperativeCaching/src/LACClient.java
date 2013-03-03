@@ -36,7 +36,7 @@ public class LACClient extends Client {
 		this.LRU_Stack = Collections.synchronizedMap(new LinkedHashMap<Integer, MetaDataofBlock>(cacheSize, 1.1f, true));
 		this.forwardingCandidatePool = Collections.synchronizedMap(new LinkedHashMap<Integer, MetaDataofBlock>(forwardingPoolSize, 1.1f, true));
 		this.epochCounter = epochCounter;
-		this.epochTimer = epochTimer;
+		this.epochTimer = epochTimer; 
 	}
 
 	@Override

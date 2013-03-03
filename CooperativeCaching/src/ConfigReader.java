@@ -354,72 +354,116 @@ public class ConfigReader {
 	}
 
 	public void readFile(File file) throws FileNotFoundException {
+		
+		System.out.println("Configuration");
 		Scanner scanner = new Scanner(file);
-		if (scanner.hasNextLine())
+		if (scanner.hasNextLine()) {
 			setN_L(Integer.parseInt(scanner.nextLine()));
+			System.out.println("N_L:" + getN_L());
+		}
 		else {
 				System.err.println("File is empty");
 				System.exit (1);
 		}
 		
-		if (scanner.hasNextLine())
+		if (scanner.hasNextLine()) {
 			setN_U(Integer.parseInt(scanner.nextLine()));
+			System.out.println("N_U:" + getN_U());
+		}
 		
-		if (scanner.hasNextLine())
+		if (scanner.hasNextLine()) {
 			setN_D(Integer.parseInt(scanner.nextLine()));
+			System.out.println("N_D:" + getN_D());
+		}
 		
-		if (scanner.hasNextLine())
+		if (scanner.hasNextLine()) {
 			setClientCacheSize(Long.parseLong(scanner.nextLine()));
+			System.out.println("Client Cache Size:" + getClientCacheSize());
+		}
 		
-		if (scanner.hasNextLine())
+		if (scanner.hasNextLine()) {
 			setServerCacheSize(Long.parseLong(scanner.nextLine()));
+			System.out.println("Server Cache Size:" + getServerCacheSize());
+		}
 		
-		if (scanner.hasNextLine())
+		if (scanner.hasNextLine()) {
 			setForwardingPoolSize(Long.parseLong(scanner.nextLine()));
+			System.out.println("Forwarding Pool:" + getForwardingPoolSize());
+		}
 		
-		if (scanner.hasNextLine())
+		if (scanner.hasNextLine()) {
 			setBlockSize(Integer.parseInt(scanner.nextLine()));
+			System.out.println("Block Size:" + getBlockSize());
+		}
 		
-		if (scanner.hasNextLine())
+		if (scanner.hasNextLine()) {
 			setNumberOfBlocks(Integer.parseInt(scanner.nextLine()));
+			System.out.println("Number of Blocks:" + getNumberOfBlocks());
+		}
 		
-		if (scanner.hasNextLine())
+		if (scanner.hasNextLine()) {
 			setNumberOfRequests(Long.parseLong(scanner.nextLine()));
+			System.out.println("Number of Requests" + getNumberOfRequests());
+		}
 		
-		if (scanner.hasNextLine())
+		if (scanner.hasNextLine()) {
 			setDiskAccessTime(Double.parseDouble(scanner.nextLine()));
+			System.out.println("Disk Access Time:" + getDiskAccessTime());
+		}
 		
-		if (scanner.hasNextLine())
+		if (scanner.hasNextLine()) {
 			setClientCacheAccessTime(Double.parseDouble(scanner.nextLine()));
+			System.out.println("Client Cache Access Time:" + getClientCacheAccessTime());
+		}
 		
-		if (scanner.hasNextLine())
+		if (scanner.hasNextLine()) {
 			setLatencyTime(Double.parseDouble(scanner.nextLine()));
+			System.out.println("Latency Time" + getLatencyTime());
+		}
 		
-		if (scanner.hasNextLine())
+		if (scanner.hasNextLine()) {
 			setAlgorithm((scanner.nextLine()));
+			System.out.println("Algorithm:" + getAlgorithm());
+		}
 		
-		if (scanner.hasNextLine())
+		if (scanner.hasNextLine()) {
 			setBlockSeed(Long.parseLong(scanner.nextLine()));
+			System.out.println("Block Seed:" + getBlockSeed());
+		}
 		
-		if (scanner.hasNextLine())
+		if (scanner.hasNextLine()) {
 			setClientSeed(Long.parseLong(scanner.nextLine()));
+			System.out.println("Client Seed:" + getClientSeed());
+		}
 		
-		if (scanner.hasNextLine())
+		if (scanner.hasNextLine()) {
 			setRequestSeed(Long.parseLong(scanner.nextLine()));
+			System.out.println("Request Seed:" + getRequestSeed());
+		}
 		
-		if (scanner.hasNextLine())
-			setRequestLambda(Double.parseDouble(scanner.nextLine()));	
+		if (scanner.hasNextLine()) {
+			setRequestLambda(Double.parseDouble(scanner.nextLine()));
+			System.out.println("Request Lambda:" + getRequestLambda());
+		}
 		
-		if (scanner.hasNextLine())
+		if (scanner.hasNextLine()) {
 			setEpochCounter(Integer.parseInt(scanner.nextLine()));
+			System.out.println("Epoch Counter:" + getEpochCounter());
+		}
 		
-		if (scanner.hasNextLine())
+		if (scanner.hasNextLine()) {
 			setEpochTimer(Integer.parseInt(scanner.nextLine()));
+			System.out.println("Epoch Timer:" + getEpochTimer());
+		}
 		
-		if (scanner.hasNextLine())
+		if (scanner.hasNextLine()) {
 			setConditionsforServerMemoryAlgorithm(scanner.nextLine());
+			System.out.println("Condition for server memory algorithm:" + getConditionsforServerMemoryAlgorithm());
+		}
 		
-		if (scanner.hasNextLine())
+		if (scanner.hasNextLine()) {
 			setBaseCase(scanner.nextLine());
+			System.out.println("Base Case:" + getBaseCase());
+		}
 	}
 }
